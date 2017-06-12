@@ -16,6 +16,8 @@ MainWindow::~MainWindow()
 void MainWindow::updateStatus(X32Status status)
 {
     qDebug() << "Status: " << status.consoleName;
+    this->setWindowTitle("Conntected: " + status.consoleType);
+    ui->consoleData->setText(status.consoleName + " (" + status.consoleVersion + ")");
 }
 
 void MainWindow::updateUserctrl(X32ConfigUserctrl config)

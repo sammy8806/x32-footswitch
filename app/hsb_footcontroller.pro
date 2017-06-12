@@ -43,5 +43,4 @@ HEADERS += \
     x32Types/x32type.h \
     x32Types/x32configuserctrl.h
 
-FORMS += \
-        mainwindow.ui
+FORMS += mainwindow.ui

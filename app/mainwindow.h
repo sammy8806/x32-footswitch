@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <QLineEdit>
 
 #include <x32Types/x32status.h>
 #include <x32Types/x32configuserctrl.h>
