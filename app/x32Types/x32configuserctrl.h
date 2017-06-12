@@ -10,7 +10,7 @@
 #include <osc/reader/types/OscFloat.h>
 #include <osc/reader/types/OscInteger.h>
 
-enum X32ConfigBtn {
+enum X32ConfigBtn : char {
     BtnJumpToPage = 'P',
     BtnMute = 'O',
     BtnInsert = 'I',
@@ -22,7 +22,7 @@ enum X32ConfigBtn {
     BtnAutomixEnable = 'A'
 };
 
-enum X32ConfigRotary {
+enum X32ConfigRotary : char {
     RotFader = 'F',
     RotPan = 'P',
     RotSend = 'S',
@@ -30,6 +30,11 @@ enum X32ConfigRotary {
     RotMidi = 'M',
     RotRemote = 'R',
     RotChanSelect = 'D'
+};
+
+struct UserctrlButton {
+    X32ConfigBtn type;
+    QString data;
 };
 
 class X32ConfigUserctrl
@@ -42,6 +47,10 @@ public:
     }
 
     void parseUserCtrl(QString data);
+
+    UserctrlButton buttonData;
+    QString page;
+    QString number;
 
 };
 

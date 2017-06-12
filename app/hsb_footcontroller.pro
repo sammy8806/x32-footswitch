@@ -33,7 +33,9 @@ SOURCES += \
     oscudpsocket.cpp \
     x32packetparser.cpp \
     x32Types/x32status.cpp \
-    x32Types/x32configuserctrl.cpp
+    x32Types/x32configuserctrl.cpp \
+    x32packetmanager.cpp \
+    x32console.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,6 +43,8 @@ HEADERS += \
     x32packetparser.h \
     x32Types/x32status.h \
     x32Types/x32type.h \
-    x32Types/x32configuserctrl.h
+    x32Types/x32configuserctrl.h \
+    x32packetmanager.h \
+    x32console.h
 
 FORMS += mainwindow.ui

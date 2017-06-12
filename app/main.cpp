@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
     X32PacketParser *parser = new X32PacketParser(sock);
 
     QObject::connect(parser, SIGNAL(receivedStatus(X32Status)), &w, SLOT(updateStatus(X32Status)));
+    QObject::connect(parser, SIGNAL(receivedUserctrl(X32ConfigUserctrl)), &w, SLOT(updateUserctrl(X32ConfigUserctrl)));
 
     sock->initSocket();
 
@@ -35,8 +36,8 @@ int main(int argc, char *argv[])
         sock->sendData(msg.getBytes());
     }
 */
-    {
-        OscMessageComposer msg("/config/userctrl/A/btn/5");
+    for(int i=5; i<=10; i++) {
+        OscMessageComposer msg("/config/userctrl/A/btn/" + QString::number(i));
         sock->sendData(msg.getBytes());
     }
 /*
