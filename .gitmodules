@@ -1,0 +1,3 @@
+[submodule "OSC"]
+	path = OSC
+	url = https://github.com/MugenSAS/osc-cpp-qt.git
