@@ -3,8 +3,10 @@
 
 #include "oscudpsocket.h"
 #include "x32packetparser.h"
+#include "backgroundheartbeat.h"
 
 #include <osc/composer/OscMessageComposer.h>
+#include <x32console.h>
 
 int main(int argc, char *argv[])
 {
@@ -15,8 +17,15 @@ int main(int argc, char *argv[])
     OscUdpSocket *sock = new OscUdpSocket();
     X32PacketParser *parser = new X32PacketParser(sock);
 
+    BackgroundHeartbeat *heartbeat = new BackgroundHeartbeat();
+    QObject::connect(heartbeat, SIGNAL(sendMessage(QByteArray)), sock, SLOT(sendMessage(QByteArray)));
+
+    X32Console *console = new X32Console();
+
     QObject::connect(parser, SIGNAL(receivedStatus(X32Status)), &w, SLOT(updateStatus(X32Status)));
-    QObject::connect(parser, SIGNAL(receivedUserctrl(X32ConfigUserctrl)), &w, SLOT(updateUserctrl(X32ConfigUserctrl)));
+    // QObject::connect(parser, SIGNAL(receivedUserctrl(X32ConfigUserctrl)), &w, SLOT(updateUserctrl(X32ConfigUserctrl)));
+
+    QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), console, SLOT(handleMessage(QNetworkDatagram)));
 
     sock->initSocket();
 
@@ -30,17 +39,22 @@ int main(int argc, char *argv[])
         msg.pushString("ch/02/config");
         sock->sendData(msg.getBytes());
     }
-
     {
-        OscMessageComposer msg("/ch/02/mix/fader");
+        OscMessageComposer msg("/unsubscribe");
         sock->sendData(msg.getBytes());
     }
 */
+
+    {
+        OscMessageComposer msg("/xremote");
+        sock->sendData(msg.getBytes());
+    }
+/*
     for(int i=5; i<=10; i++) {
         OscMessageComposer msg("/config/userctrl/A/btn/" + QString::number(i));
         sock->sendData(msg.getBytes());
     }
-/*
+
     {
         OscMessageComposer msg("/config/userctrl/A/btn/5");
         msg.pushString("O02");

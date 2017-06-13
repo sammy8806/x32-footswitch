@@ -26,9 +26,6 @@ void OscUdpSocket::processDatagram(QNetworkDatagram data)
     QString address = msg->getAddress();	// Get the message address
     qDebug() << address << "#" << msg->getNumValues();
 
-    if(address == "/ch/02/mix/fader")
-        qDebug() << msg->getValue(0)->toFloat();
-
     delete msg;
 }
 
@@ -50,4 +47,9 @@ void OscUdpSocket::readPendingDatagrams()
         QNetworkDatagram datagram = udpSocket->receiveDatagram();
         emit datagramReady(datagram);
     }
+}
+
+void OscUdpSocket::sendMessage(QByteArray data)
+{
+    this->sendData(&data);
 }

@@ -35,7 +35,10 @@ SOURCES += \
     x32Types/x32status.cpp \
     x32Types/x32configuserctrl.cpp \
     x32packetmanager.cpp \
-    x32console.cpp
+    x32console.cpp \
+    backgroundheartbeat.cpp \
+    x32Types/mutegroup.cpp \
+    x32Types/channel.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -45,6 +48,9 @@ HEADERS += \
     x32Types/x32type.h \
     x32Types/x32configuserctrl.h \
     x32packetmanager.h \
-    x32console.h
+    x32console.h \
+    backgroundheartbeat.h \
+    x32Types/mutegroup.h \
+    x32Types/channel.h
 
 FORMS += mainwindow.ui

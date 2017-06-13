@@ -3,10 +3,14 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    btnData(new QList<UserctrlButton>)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->btnData = new QMap<qint8, UserctrlButton*>();
+    for(int i=0; i<12; i++) {
+        this->btnData->insert(i, new UserctrlButton());
+    }
 }
 
 MainWindow::~MainWindow()
@@ -28,16 +32,19 @@ void MainWindow::updateUserctrl(X32ConfigUserctrl config)
     qint8 number = config.number.toInt();
     if(number < 5) return;
 
-    btn.at(number-1)->setText(config.buttonData.data);
+    btn.at(number - 1)->setText(config.buttonData.data);
     qDebug() << "Set: " << config.buttonData.data;
+
+    UserctrlButton *data = this->btnData->value(number);
+    data->data = config.buttonData.data;
 }
 
 void MainWindow::on_btn5_clicked()
 {
-    UserctrlButton btnData = this->btnData->at(5);
-    switch (btnData.type) {
-    case X32ConfigRotary::BtnMute :
-        emit mute(btnData.data.toInt(), 1);
+    UserctrlButton *btnData = this->btnData->value(5);
+    switch (btnData->type) {
+    case X32ConfigBtn::BtnMute :
+        emit mute(btnData->data.toInt(), 1);
         break;
     default:
         break;

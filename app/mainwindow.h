@@ -26,7 +26,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QList<UserctrlButton> *btnData;
+    QMap<qint8, UserctrlButton*> *btnData;
 
 public slots:
     void updateStatus(X32Status status);

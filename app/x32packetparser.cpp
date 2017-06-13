@@ -4,8 +4,6 @@ X32PacketParser::X32PacketParser(OscUdpSocket *socket, QObject *parent) : QObjec
     types(QVector<X32Type>())
 {
     connect(socket, SIGNAL(datagramReady(QNetworkDatagram)), this, SLOT(handleOscReader(QNetworkDatagram)));
-
-    // this->types.append(new X32Status());
 }
 
 void X32PacketParser::parseStatusData(OscMessage *msg)
@@ -50,19 +48,6 @@ void X32PacketParser::handleOscReader(QNetworkDatagram data)
     QString address = msg->getAddress();	// Get the message address
     qDebug() << address << "#" << msg->getNumValues();
 
-    handleTypeData(msg);
-
-    return;
-    QRegExp expChannel("^/ch.*");
-    expChannel.setPatternSyntax(QRegExp::RegExp);
-    if(expChannel.exactMatch(address)) {
-        qDebug() << msg->getValue(0)->toFloat();
-    }
-
-    QRegExp expStatus("^/([x]{,1}status|info).*");
-    expStatus.setPatternSyntax(QRegExp::RegExp);
-    if(expStatus.exactMatch(address)) {
-        parseStatusData(msg);
-    }
-
+    emit
+    // handleTypeData(msg);
 }

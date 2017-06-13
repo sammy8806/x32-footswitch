@@ -14,6 +14,8 @@
 #include <osc/reader/types/OscValue.h>
 #include <osc/reader/types/OscFloat.h>
 
+#include <osc/composer/OscMessageComposer.h>
+
 class OscUdpSocket : public QObject
 {
     Q_OBJECT
@@ -33,7 +35,7 @@ signals:
 
 public slots:
     void readPendingDatagrams();
-
+    void sendMessage(QByteArray data);
 };
 
 #endif // OSCUDPSOCKET_H
