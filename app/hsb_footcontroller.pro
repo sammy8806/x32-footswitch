@@ -25,7 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 INCLUDEPATH += ../OSC/
-LIBS += -L../OSC -L../OSC/bin/debug -L../OSC/bin/release -L/home/steven/work/hsb_footcontroller/OSC/bin/debug/ -losc
+LIBS += -L../OSC \
+    -L../OSC/bin/debug \
+    -L../OSC/bin/release \
+    -L/home/steven/work/hsb_footcontroller/OSC/bin/debug/ \
+    -L/home/steven/work/x32-footswitch/OSC/bin/debug/ \
+    -losc
 
 SOURCES += \
         main.cpp \

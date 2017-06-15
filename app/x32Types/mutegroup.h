@@ -12,13 +12,10 @@ class Mutegroup : public QObject {
     Q_OBJECT
 
 public:
-    Mutegroup(X32Console *console, qint16 number, bool state = false, QObject *parent = nullptr) :
-        QObject(parent), console(console), number(number), state(state) {
-
-    }
+    Mutegroup(X32ConsoleAbstract *console, qint16 number, bool state = false, QObject *parent = nullptr);
 
 private:
-    X32Console *console;
+    X32ConsoleAbstract *console;
 
 protected:
     qint16 number;

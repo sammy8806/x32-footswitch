@@ -7,6 +7,29 @@
 #define X32_INTERNAL
 // class X32Console;
 
+#include <osc/composer/OscMessageComposer.h>
+#include <osc/reader/OscMessage.h>
+#include <oscudpsocket.h>
+
+class X32ConsoleAbstract : public QObject {
+    Q_OBJECT
+
+public:
+    X32ConsoleAbstract(QObject *parent = nullptr) : QObject(parent) {
+
+    }
+
+    virtual void setSocket(OscUdpSocket *socket);
+    virtual void sendMessage(OscMessageComposer msg);
+
+    virtual void removeMessage(OscMessage& msg);
+
+
+protected:
+    OscUdpSocket *socket;
+    QVector<OscMessage*> *dataPool;
+};
+
 enum X32LcdColors {
     Off,
     Red,

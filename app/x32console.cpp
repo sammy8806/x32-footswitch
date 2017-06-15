@@ -1,6 +1,6 @@
 #include "x32console.h"
 
-X32Console::X32Console(QObject *parent) : QObject(parent)
+X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
 {
     this->dataPool = new QVector<OscMessage*>();
     this->mutegroups = new QMap<qint16, Mutegroup*>();
@@ -20,20 +20,20 @@ X32Console::X32Console(QObject *parent) : QObject(parent)
 
 }
 
-void X32Console::setSocket(OscUdpSocket *socket)
+void X32ConsoleAbstract::setSocket(OscUdpSocket *socket)
 {
     this->socket = socket;
 }
 
-void X32Console::sendMessage(OscMessageComposer msg)
+void X32ConsoleAbstract::sendMessage(OscMessageComposer msg)
 {
     if(this->socket == nullptr) return;
     socket->sendData(msg.getBytes());
 }
 
-void X32Console::removeMessage(OscMessage &msg)
+void X32ConsoleAbstract::removeMessage(OscMessage &msg)
 {
-    this->dataPool->removeOne(msg);
+    this->dataPool->removeOne(&msg);
 }
 
 void X32Console::handleMessage(QNetworkDatagram data)

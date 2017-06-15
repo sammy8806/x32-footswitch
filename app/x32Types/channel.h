@@ -12,7 +12,7 @@ class Channel : public QObject {
     Q_OBJECT
 
 public:
-    Channel(X32Console *console, QObject *parent = nullptr) : QObject(parent), console(console) {
+    Channel(X32ConsoleAbstract *console, QObject *parent = nullptr) : QObject(parent) {
         // OscMessageComposer mix("/subscribe");
         // mix.pushString("/ch/01/mix/on");
         // mix.pushInt32(10);
@@ -40,7 +40,7 @@ protected:
     ChannelMix mix;
 
 private:
-    X32Console* console;
+    X32ConsoleAbstract* console;
 
 public slots:
     X32_INTERNAL void findMessage(QString address, OscMessage& data) {
