@@ -27,10 +27,12 @@ int main(int argc, char *argv[])
 
     QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), console, SLOT(handleMessage(QNetworkDatagram)));
 
+    QObject::connect(console, SIGNAL(updateChannel(Channel*)), &w, SLOT(updateChannel(Channel*)));
+
     sock->initSocket();
 
     {
-        OscMessageComposer msg("/info");
+        OscMessageComposer msg("/xinfo");
         sock->sendData(msg.getBytes());
     }
 /*
@@ -49,12 +51,12 @@ int main(int argc, char *argv[])
         OscMessageComposer msg("/xremote");
         sock->sendData(msg.getBytes());
     }
-/*
+
     for(int i=5; i<=10; i++) {
         OscMessageComposer msg("/config/userctrl/A/btn/" + QString::number(i));
         sock->sendData(msg.getBytes());
     }
-
+/*
     {
         OscMessageComposer msg("/config/userctrl/A/btn/5");
         msg.pushString("O02");

@@ -39,6 +39,32 @@ void MainWindow::updateUserctrl(X32ConfigUserctrl config)
     data->data = config.buttonData.data;
 }
 
+void MainWindow::updateChannel(Channel *channel)
+{
+    qDebug() << "Updated CH" << channel->getNumber();
+
+    QPushButton *btn;
+
+    switch (channel->number) {
+    case 1:
+        btn = ui->chan01;
+        break;
+    case 32:
+        btn = ui->chan32;
+        break;
+    default:
+        return;
+        break;
+    }
+
+    qDebug() << "-> Chan " << channel->number;
+    if(channel->mix.on == X32BoolState::OFF) {
+        btn->setStyleSheet("background-color: red;");
+    } else {
+        btn->setStyleSheet("background-color: green;");
+    }
+}
+
 void MainWindow::on_btn5_clicked()
 {
     UserctrlButton *btnData = this->btnData->value(5);

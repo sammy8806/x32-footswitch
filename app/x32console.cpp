@@ -12,12 +12,12 @@ X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
         this->mutegroups->insert(i, mg);
     }
 
-    for(int i=0; i<32; i++) {
-        Channel *chan = new Channel(this, this);
+    for(int i=1; i<=32; i++) {
+        Channel *chan = new Channel(this, i, this);
         connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), chan, SLOT(findMessage(QString,OscMessage&)));
+        connect(chan, SIGNAL(updated(Channel*)), this, SLOT(updatedChannel(Channel*)));
         this->channels->insert(i, chan);
     }
-
 }
 
 void X32ConsoleAbstract::setSocket(OscUdpSocket *socket)
@@ -52,4 +52,11 @@ void X32Console::handleMessage(QNetworkDatagram data)
     this->dataPool->append(msg);
 
     emit distributeMessage(msg->getAddress(), *msg);
+}
+
+void X32Console::updatedChannel(Channel *channel)
+{
+    qDebug() << "Updated Chan #" << channel->getNumber();
+
+    emit updateChannel(channel);
 }

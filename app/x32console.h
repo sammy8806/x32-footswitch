@@ -24,9 +24,11 @@ protected:
 
 signals:
     X32_INTERNAL void distributeMessage(QString address, OscMessage& dataPtr);
+    void updateChannel(Channel* channel);
 
 public slots:
     void handleMessage(QNetworkDatagram data);
+    void updatedChannel(Channel* channel);
 };
 
 #endif // X32CONSOLE_H
