@@ -8,7 +8,13 @@ OscUdpSocket::OscUdpSocket(QObject *parent) : QObject(parent), sendQueue(new QQu
 void OscUdpSocket::initSocket()
 {
     udpSocket = new QUdpSocket(this);
-    udpSocket->bind(QHostAddress("172.16.0.240"), 10050);
+    udpSocket->bind(QHostAddress(QHostAddress::Any), 10050, QUdpSocket::ReuseAddressHint);
+
+    if(udpSocket->state() == QUdpSocket::BoundState) {
+        qDebug() << "Socket bound!";
+    } else {
+        qDebug() << "Connection failed!";
+    }
 
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
     connect(sendTimer, SIGNAL(timeout()), this, SLOT(processSendQueue()));
