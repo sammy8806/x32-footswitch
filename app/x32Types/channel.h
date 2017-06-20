@@ -49,7 +49,7 @@ public:
     }
 
     void refresh() {
-        this->refreshTimer->start(20);
+        this->refreshTimer->start(0);
     }
 
 public slots:
