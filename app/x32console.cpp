@@ -83,8 +83,11 @@ QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
 
 void X32Console::refreshValues()
 {
-    for(int i=1; i<=32; i++)
+/*    for(int i=1; i<=32; i++)
         this->channels->value(i)->refresh();
+*/
+    for(int i=0; i<8; i++)
+        this->mutegroups->value(i)->refresh();
 }
 
 void X32ConsoleAbstract::setSocket(OscUdpSocket *socket)
@@ -129,20 +132,51 @@ void X32Console::handleNode(QString address, OscMessage& dataPtr)
     if(address.left(5) != "node\0x00") return;
 
     QString data = dataPtr.getValue(0)->toString();
+
     QStringList args = data.split(QChar(' '));
     QString addr = args.at(0);
     QString value = "";
     for(int i=1; i<=args.length()-1; i++) {
-        value.append(args.at(i));
+        value.append(args.at(i) + " ");
     }
 
     this->removeMessage(dataPtr);
     value.remove(0xA);
+    value = value.trimmed();
+
+    OscMessageComposer composer = OscMessageComposer(addr);
+
+    bool hasData = false;
+    QString tmp = "";
+    bool inString = false;
+    QChar activeChar;
+
+    for(int i=0; i<value.length(); i++) {
+        activeChar = value.at(i);
+
+        if(activeChar == '"' && !inString) {
+            inString = true;
+            hasData = true;
+        } else if(activeChar == ' ' && !inString) {
+            composer.pushString(tmp);
+            tmp.clear();
+            hasData = false;
+        } else if(activeChar == '"' && inString) {
+            inString = false;
+        } else {
+            hasData = true;
+            tmp.append(activeChar);
+        }
+    }
+
+    if(tmp.length() != 0 || ( hasData && tmp.length() == 0 )) {
+        composer.pushString(tmp);
+        tmp.clear();
+    }
 
     // qDebug() << "Handling node-answer for " << addr;
 
-    OscMessageComposer composer = OscMessageComposer(addr);
-    composer.pushString(value.trimmed());
+    // composer.pushString(value.trimmed());
 
     // qDebug() << "Value: " << value;
 

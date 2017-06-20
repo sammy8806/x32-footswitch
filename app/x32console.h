@@ -26,6 +26,7 @@ public:
     QMap<qint16, Mutegroup*> *mutegroups;
     QMap<qint16, Channel*> *channels;
     X32Config *config;
+
     // QMap<qint16, Cue> cues;
     // QMap<qint16, Scene> scenes;
 

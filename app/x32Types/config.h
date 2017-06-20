@@ -2,8 +2,11 @@
 #define CONFIG_H
 
 #include <QObject>
+#include <QMap>
+
 #include <x32Types/x32type.h>
 #include <x32Types/x32configuserctrl.h>
+#include <x32Types/mutegroup.h>
 
 class X32Config : public QObject
 {
@@ -21,6 +24,7 @@ private:
 public:
     ChLink chlink;
     X32ConfigUserctrl *userctrl;
+    QMap<qint8, Mutegroup*> *mutegroups;
 
 signals:
     X32_INTERNAL void distributeMessage(QString address, OscMessage& dataPtr);
