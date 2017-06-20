@@ -34,7 +34,7 @@ void OscUdpSocket::sendData(QByteArray *data)
 {
     QByteArray *dat = new QByteArray(data->data(), data->length());
     this->sendQueue->enqueue(dat);
-    this->sendTimer->start(15);
+    this->sendTimer->start(7);
 }
 
 void OscUdpSocket::processSendQueue()
