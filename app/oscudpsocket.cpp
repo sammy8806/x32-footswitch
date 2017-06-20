@@ -31,7 +31,14 @@ void OscUdpSocket::processDatagram(QNetworkDatagram data)
 
 void OscUdpSocket::sendData(QByteArray *data)
 {
-    qint64 bytesWritten = udpSocket->writeDatagram(*data, QHostAddress("172.16.1.100"), 10023);
+    if(this->udpSocket == nullptr) {
+        qDebug() << "What happened here?!";
+        this->initSocket();
+    }
+
+    assert(this->udpSocket != nullptr);
+
+    qint64 bytesWritten = this->udpSocket->writeDatagram(*data, QHostAddress("172.16.1.100"), 10023);
 
     // qint64 bytesWritten = udpSocket->write(*data);
     if(bytesWritten < 0) {

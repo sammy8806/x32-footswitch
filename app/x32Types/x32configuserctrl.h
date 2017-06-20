@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QRegExp>
 #include <assert.h>
+#include <qmath.h>
 
 #include <x32Types/x32type.h>
 
@@ -13,35 +14,6 @@
 #include <osc/reader/types/OscString.h>
 #include <osc/reader/types/OscFloat.h>
 #include <osc/reader/types/OscInteger.h>
-
-enum X32ConfigBtn : char {
-    BtnJumpToPage = 'P',
-    BtnMute = 'O',
-    BtnInsert = 'I',
-    BtnEffect = 'X',
-    BtnMidi = 'M', // MidiPush & MidiToggle
-    BtnRemote = 'R',
-    BtnRecall = 'S', // 3 Types of Recall (Scene=0, Snippet=2, Cue=4)
-    BtnUsbRecorder = 'T',
-    BtnAutomixEnable = 'A'
-};
-
-enum X32ConfigRotary : char {
-    RotFader = 'F',
-    RotPan = 'P',
-    RotSend = 'S',
-    RotEffect = 'X',
-    RotMidi = 'M',
-    RotRemote = 'R',
-    RotChanSelect = 'D'
-};
-
-struct UserctrlButton {
-    X32ConfigBtn type;
-    QString data;
-};
-
-typedef QMap<qint8, QString> UserctrlBank;
 
 class X32ConfigUserctrl : public QObject
 {
@@ -63,14 +35,18 @@ public:
     QMap<QString, X32ConfigBtn> *btnMap;
     QMap<QString, X32ConfigRotary> *rotaryMap;
 
+    static QString parseButtonData(QString data);
+    static QString parseChannelName(qint8 channelNumber);
+
 private:
     QMap<QChar, UserctrlBank*> *assignData;
     X32ConsoleAbstract *console;
 
     void updateBtn(UserctrlBank* bank, qint8 btnNr, OscMessage& data);
 
+public:
 signals:
-    void updated(X32ConfigUserctrl* userctrl);
+    void updatedButton(UserctrlBank *bank, qint8 btnNr);
 
 public slots:
     X32_INTERNAL void findMessage(QString address, OscMessage& data) {

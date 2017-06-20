@@ -18,8 +18,9 @@ class X32Console : public X32ConsoleAbstract
 public:
     explicit X32Console(QObject *parent = nullptr);
 
-protected:
+    void refreshValues();
 
+protected:
     QMap<qint16, Mutegroup*> *mutegroups;
     QMap<qint16, Channel*> *channels;
     X32Config *config;
@@ -29,10 +30,15 @@ protected:
 signals:
     X32_INTERNAL void distributeMessage(QString address, OscMessage& dataPtr);
     void updateChannel(Channel* channel);
+    void updateUserctrlButton(UserctrlBank *bank, qint8 btnNr);
 
 public slots:
     void handleMessage(QNetworkDatagram data);
+    void handleNode(QString address, OscMessage& dataPtr);
     void updatedChannel(Channel* channel);
+    void updatedUserctrlButton(UserctrlBank *bank, qint8 btnNr);
+
+    void mute(qint8 chan);
 };
 
 #endif // X32CONSOLE_H

@@ -1,6 +1,8 @@
 #ifndef OSCUDPSOCKET_H
 #define OSCUDPSOCKET_H
 
+#include <assert.h>
+
 #include <QObject>
 #include <QDebug>
 #include <QUdpSocket>
@@ -29,6 +31,7 @@ public:
 
 private:
     QUdpSocket *udpSocket;
+    QString bullshit = "test";
 
 signals:
     void datagramReady(QNetworkDatagram datagram);

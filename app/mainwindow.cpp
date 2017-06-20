@@ -6,11 +6,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-/*
+
     this->btnData = new QMap<qint8, UserctrlButton*>();
     for(int i=0; i<12; i++) {
         this->btnData->insert(i, new UserctrlButton());
-    }*/
+    }
+}
+
+void MainWindow::setConsole(X32Console *console)
+{
+    this->console = console;
 }
 
 MainWindow::~MainWindow()
@@ -24,21 +29,20 @@ void MainWindow::updateStatus(X32Status status)
     this->setWindowTitle("Conntected: " + status.consoleType);
     ui->consoleData->setText(status.consoleName + " (" + status.consoleVersion + ")");
 }
-/*
-void MainWindow::updateUserctrl(X32ConfigUserctrl config)
+
+void MainWindow::updateUserctrl(UserctrlBank *bank, qint8 btnNr)
 {
     QList<QPushButton*> btn = {nullptr, nullptr, nullptr, nullptr, ui->btn5, ui->btn6, ui->btn7, ui->btn8, ui->btn9, ui->btn10};
 
-    qint8 number = config.number.toInt();
-    if(number < 5) return;
+    QString btnData = bank->data->value(btnNr).data;
+    btn.at(btnNr - 1)->setText(btnData);
+    qDebug() << "Set: " << btnData;
 
-    btn.at(number - 1)->setText(config.buttonData.data);
-    qDebug() << "Set: " << config.buttonData.data;
-
-    UserctrlButton *data = this->btnData->value(number);
-    data->data = config.buttonData.data;
+    UserctrlButton *data = this->btnData->value(btnNr);
+    data->type = bank->data->value(btnNr).type;
+    data->data = btnData;
 }
-*/
+
 void MainWindow::updateChannel(Channel *channel)
 {
     qDebug() << "Updated CH" << channel->getNumber();
@@ -67,12 +71,12 @@ void MainWindow::updateChannel(Channel *channel)
 
 void MainWindow::on_btn5_clicked()
 {
-    /*UserctrlButton *btnData = this->btnData->value(5);
+    UserctrlButton *btnData = this->btnData->value(5);
     switch (btnData->type) {
     case X32ConfigBtn::BtnMute :
-        emit mute(btnData->data.toInt(), 1);
+        emit mute(btnData->data.right(2).toInt());
         break;
     default:
         break;
-    }*/
+    }
 }

@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QDebug>
+#include <QTimer>
 
 #include <oscudpsocket.h>
 
@@ -14,24 +15,59 @@ class Channel : public QObject {
     Q_OBJECT
 
 public:
-    Channel(X32ConsoleAbstract *console, qint8 number, QObject *parent = nullptr): QObject(parent), console(console), number(number) {
+    Channel(X32ConsoleAbstract *console, qint8 number, QObject *parent = nullptr): QObject(parent),
+        console(console), number(number), refreshTimer(new QTimer()) {
         // OscMessageComposer mix("/subscribe");
         // mix.pushString("/ch/01/mix/on");
         // mix.pushInt32(10);
         // this->console->sendMessage(mix);
+
+        props = new QList<QString>();
+        props->append("config/name");
+        props->append("config/icon");
+        props->append("config/color");
+        props->append("config/source");
+        props->append("mix/on");
+        props->append("mix/fader");
+        props->append("mix/st");
+        props->append("mix/pan");
+        props->append("mix/mono");
+
+        connect(refreshTimer, SIGNAL(timeout()), this, SLOT(timedRefresh()));
+        this->refreshTimer->setSingleShot(true);
+    }
+
+    void mute(bool status) {  // mix/on
+        qDebug() << "[CH" + QString::number(number)+1 + "] " + (status ? "" : "Un") + "Mute";
+
+        QString chan = QString("%1").arg(number, 2, 10, QChar('0'));
+        OscMessageComposer mute("/ch/" + chan + "/mix/on");
+        mute.pushInt32((int)status);
+        this->console->sendMessage(mute);
+
+        this->refreshTimer->start(50);
+    }
+
+    void refresh() {
+        this->refreshTimer->start(20);
     }
 
 public slots:
-    void mute(bool status) {  // mix/on
-        OscMessageComposer mute("/ch/" + QString::number(number) + "/mix/on");
-        mute.pushBool(status);
-        // this->console->sendMessage(mute);
+    void timedRefresh() {
+        QString chan = QString("%1").arg(number, 2, 10, QChar('0'));
 
-        // mix.on = X32BoolState::OFF;
+        foreach(QString prop, *props) {
+            OscMessageComposer mute("/node");
+            mute.pushString("ch/" + chan + "/" + prop);
+            this->console->sendMessage(mute);
+        }
     }
+
 
 private:
     X32ConsoleAbstract* console;
+    QList<QString> *props;
+    QTimer *refreshTimer;
 
 public:
     qint8 getNumber() { return this->number; }
@@ -65,7 +101,17 @@ public slots:
             qDebug() << 1;
             if(address.mid(11,2) == "on") {
                 qDebug() << 1;
-                qint8 isOn = data.getValue(0)->toInteger();
+                qint8 isOn = -1;
+                QString isOnTmp = data.getValue(0)->toString();
+
+                if(isOnTmp == "ON") {
+                    isOn = true;
+                } else if(isOnTmp == "OFF") {
+                    isOn = false;
+                } else {
+                    isOn = data.getValue(0)->toInteger();
+                    assert(isOn != -1);
+                }
 
                 qDebug() << "is " << (isOn ? "on" : "off") << " - " << address;
                 mix.on = isOn;

@@ -24,7 +24,6 @@ public:
 
     virtual void removeMessage(OscMessage& msg);
 
-
 protected:
     OscUdpSocket *socket;
     QVector<OscMessage*> *dataPool;
@@ -120,6 +119,28 @@ enum X32InsertType {
 
 enum X32AutomixGroup {
     NoGroup, X, Y
+};
+
+enum X32ConfigBtn : char {
+    BtnJumpToPage = 'P',
+    BtnMute = 'O',
+    BtnInsert = 'I',
+    BtnEffect = 'X',
+    BtnMidi = 'M', // MidiPush & MidiToggle
+    BtnRemote = 'R',
+    BtnRecall = 'S', // 3 Types of Recall (Scene=0, Snippet=2, Cue=4)
+    BtnUsbRecorder = 'T',
+    BtnAutomixEnable = 'A'
+};
+
+enum X32ConfigRotary : char {
+    RotFader = 'F',
+    RotPan = 'P',
+    RotSend = 'S',
+    RotEffect = 'X',
+    RotMidi = 'M',
+    RotRemote = 'R',
+    RotChanSelect = 'D'
 };
 
 struct ChannelConfig {
@@ -295,8 +316,16 @@ struct MonoConfig {
     bool link; // M/C depends on MainLR
 };
 
-struct UserctrlConfig {
-    X32LcdColors color;
+struct UserctrlButton {
+    X32ConfigBtn type;
+    QString data;
+};
+
+typedef QMap<qint8, UserctrlButton> UserctrlBankData;
+
+struct UserctrlBank {
+    QChar bank;
+    UserctrlBankData *data;
 };
 
 class X32Type : public QObject
