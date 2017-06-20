@@ -109,7 +109,7 @@ public slots:
 
         if(address.mid(7, 3) == "mix") {
             if(address.mid(11,2) == "on") {
-                qint8 isOn = -1;
+                bool isOn;
                 QString isOnTmp = data.getValue(0)->toString();
 
                 if(isOnTmp == "ON") {
@@ -117,8 +117,7 @@ public slots:
                 } else if(isOnTmp == "OFF") {
                     isOn = false;
                 } else {
-                    isOn = data.getValue(0)->toInteger();
-                    assert(isOn != -1);
+                    isOn = data.getValue(0)->toBoolean();
                 }
 
                 qDebug() << "is " << (isOn ? "on" : "off") << " - " << address;

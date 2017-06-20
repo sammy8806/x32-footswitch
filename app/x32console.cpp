@@ -83,9 +83,9 @@ QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
 
 void X32Console::refreshValues()
 {
-/*    for(int i=1; i<=32; i++)
+    for(int i=1; i<=32; i++)
         this->channels->value(i)->refresh();
-*/
+
     for(int i=0; i<8; i++)
         this->mutegroups->value(i)->refresh();
 }
@@ -156,6 +156,10 @@ void X32Console::handleNode(QString address, OscMessage& dataPtr)
     bool inString = false;
     QString tmp = "";
 
+    bool formatOk = false;
+    float bufFloat;
+    int bufInt;
+
     for(; i<data.length(); i++) {
         activeChar = data.at(i);
 
@@ -163,12 +167,28 @@ void X32Console::handleNode(QString address, OscMessage& dataPtr)
             inString = true;
             hasData = true;
         } else if(activeChar == ' ' && !inString) {
-            composer.pushString(tmp);
+            if(tmp == "OFF" || tmp == "ON") { // Bool
+                composer.pushBool( tmp == "ON" );
+            } else if(tmp.contains('.')) {
+                bufFloat = tmp.toFloat(&formatOk);
+                if(!formatOk) goto PUSH_STRING;
+                composer.pushFloat(bufFloat);
+                bufFloat = 0.0f;
+                formatOk = false;
+            } else {
+                bufInt = tmp.toInt(&formatOk);
+                if(formatOk) {
+                    composer.pushInt32(bufInt);
+                }
+PUSH_STRING:
+                composer.pushString(tmp);
+            }
+
             tmp.clear();
             hasData = false;
         } else if(activeChar == '"' && inString) {
             inString = false;
-        } else {
+        } else if(activeChar != 0xA) {
             hasData = true;
             tmp.append(activeChar);
         }
