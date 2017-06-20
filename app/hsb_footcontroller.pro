@@ -30,6 +30,7 @@ LIBS += -L../OSC \
     -L../OSC/bin/release \
     -L/home/steven/work/hsb_footcontroller/OSC/bin/debug/ \
     -L/home/steven/work/x32-footswitch/OSC/bin/debug/ \
+    -L/Users/steven/work/x32-footswitch/OSC/bin/debug/ \
     -losc
 
 SOURCES += \
