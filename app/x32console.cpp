@@ -49,7 +49,7 @@ QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
 
     // TODO: Return Channel Names if set
 
-    if(channelNumber <= 31) {
+    if(channelNumber <= CHAN_NORMAL_MAX) {
         Channel* chan;
         if(console != nullptr)
             chan = console->channels->value(channelNumber+1);
@@ -59,23 +59,23 @@ QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
         else
             output = "Channel " + QString::number(channelNumber+1);
 
-    } else if (channelNumber <= 39) {
-        output = "Aux " + QString::number(channelNumber - 31);
-    } else if (channelNumber <= 47) {
-        bool left = (channelNumber - 39) % 2;
-        output = "FX " + QString::number((int)ceil((channelNumber - 38)/2)) + QString(left ? "L" : "R");
-    } else if (channelNumber <= 63) {
-        output = "MixBus " + QString::number(channelNumber - 47);
-    } else if (channelNumber <= 69) {
-        output = "Matrix " + QString::number(channelNumber - 63);
-    } else if (channelNumber <= 70) {
+    } else if (channelNumber <= CHAN_AUX_MAX) {
+        output = "Aux " + QString::number(channelNumber - CHAN_NORMAL_MAX);
+    } else if (channelNumber <= CHAN_FX_MAX) {
+        bool left = (channelNumber - CHAN_AUX_MAX) % 2;
+        output = "FX " + QString::number((int)ceil((channelNumber - CHAN_AUX_MAX + 1)/2)) + QString(left ? "L" : "R");
+    } else if (channelNumber <= CHAN_BUS_MAX) {
+        output = "MixBus " + QString::number(channelNumber - CHAN_FX_MAX);
+    } else if (channelNumber <= CHAN_MATRIX_MAX) {
+        output = "Matrix " + QString::number(channelNumber - CHAN_BUS_MAX);
+    } else if (channelNumber <= CHAN_MAINLR) {
         output = "Main LR";
-    } else if (channelNumber <= 71) {
+    } else if (channelNumber <= CHAN_MAINMC) {
         output = "Main M/C";
-    } else if (channelNumber <= 79) {
-        output = "DCA " + QString::number(channelNumber - 71);
-    } else if (channelNumber <= 85) {
-        output = "MuteGroup " + QString::number(channelNumber - 79);
+    } else if (channelNumber <= CHAN_DCA_MAX) {
+        output = "DCA " + QString::number(channelNumber - CHAN_MAINMC);
+    } else if (channelNumber <= CHAN_MUTEGROUP_MAX) {
+        output = "MuteGroup " + QString::number(channelNumber - CHAN_DCA_MAX);
     }
 
     return output;

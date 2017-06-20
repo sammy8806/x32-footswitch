@@ -29,6 +29,16 @@ protected:
     QVector<OscMessage*> *dataPool;
 };
 
+#define CHAN_NORMAL_MAX 31
+#define CHAN_AUX_MAX 39
+#define CHAN_FX_MAX 47
+#define CHAN_BUS_MAX 63
+#define CHAN_MATRIX_MAX 69
+#define CHAN_MAINLR 70
+#define CHAN_MAINMC 71
+#define CHAN_DCA_MAX 79
+#define CHAN_MUTEGROUP_MAX 85
+
 enum X32LcdColors {
     Off,
     Red,
