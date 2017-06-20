@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    w.show();
 
     OscUdpSocket *sock = new OscUdpSocket();
     // X32PacketParser *parser = new X32PacketParser(sock);
@@ -36,6 +35,7 @@ int main(int argc, char *argv[])
     QObject::connect(&w, SIGNAL(mute(qint8)), console, SLOT(mute(qint8)));
 
     sock->initSocket();
+    console->refreshValues();
 
     {
         OscMessageComposer msg("/xinfo");
@@ -63,8 +63,6 @@ int main(int argc, char *argv[])
         sock->sendData(msg.getBytes());
     }
 
-    console->refreshValues();
-
 /*
     {
         OscMessageComposer msg("/config/userctrl/A/btn/5");
@@ -77,6 +75,8 @@ int main(int argc, char *argv[])
     msg2.pushFloat(0.4692);
     sock->sendData(msg2.getBytes());
     */
+
+    w.show();
 
     return a.exec();
 }

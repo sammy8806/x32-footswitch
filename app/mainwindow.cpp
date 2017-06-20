@@ -35,8 +35,9 @@ void MainWindow::updateUserctrl(UserctrlBank *bank, qint8 btnNr)
     QList<QPushButton*> btn = {nullptr, nullptr, nullptr, nullptr, ui->btn5, ui->btn6, ui->btn7, ui->btn8, ui->btn9, ui->btn10};
 
     QString btnData = bank->data->value(btnNr).data;
-    btn.at(btnNr - 1)->setText(btnData);
-    qDebug() << "Set: " << btnData;
+    QString btnTitle = X32Console::parseButtonData(btnData, console);
+    btn.at(btnNr - 1)->setText(btnTitle);
+    qDebug() << "Set: " << btnData << btnTitle;
 
     UserctrlButton *data = this->btnData->value(btnNr);
     data->type = bank->data->value(btnNr).type;

@@ -26,6 +26,59 @@ X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
     connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), this, SLOT(handleNode(QString,OscMessage&)));
 }
 
+QString X32Console::parseButtonData(QString data, X32Console* console)
+{
+    QString output;
+
+    if(data.at(0) == 'O') {
+        output = "Mute";
+
+        output.append(X32Console::parseChannelName(data.right(2).toInt(), console));
+    } else {
+        output = data;
+    }
+
+    return output;
+}
+
+QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
+{
+    QString output = "";
+
+    // TODO: Return Channel Names if set
+
+    if(channelNumber <= 31) {
+        Channel* chan;
+        if(console != nullptr)
+            chan = console->channels->value(channelNumber+1);
+
+        if(chan != nullptr && chan->config.name != "")
+            output = chan->config.name;
+        else
+            output = "Channel " + QString::number(channelNumber+1);
+
+    } else if (channelNumber <= 39) {
+        output = "Aux " + QString::number(channelNumber - 31);
+    } else if (channelNumber <= 47) {
+        bool left = (channelNumber - 39) % 2;
+        output = "FX " + QString::number((int)ceil((channelNumber - 38)/2)) + QString(left ? "L" : "R");
+    } else if (channelNumber <= 63) {
+        output = "MixBus " + QString::number(channelNumber - 47);
+    } else if (channelNumber <= 69) {
+        output = "Matrix " + QString::number(channelNumber - 63);
+    } else if (channelNumber <= 70) {
+        output = "Main LR";
+    } else if (channelNumber <= 71) {
+        output = "Main M/C";
+    } else if (channelNumber <= 79) {
+        output = "DCA " + QString::number(channelNumber - 71);
+    } else if (channelNumber <= 85) {
+        output = "MuteGroup " + QString::number(channelNumber - 79);
+    }
+
+    return output;
+}
+
 void X32Console::refreshValues()
 {
     for(int i=1; i<=32; i++)
@@ -50,7 +103,7 @@ void X32ConsoleAbstract::removeMessage(OscMessage &msg)
 
 void X32Console::handleMessage(QNetworkDatagram data)
 {
-    qDebug() << "Data: " << data.data();
+    // qDebug() << "Data: " << data.data();
 
     QByteArray byteData(data.data());
 
@@ -60,7 +113,7 @@ void X32Console::handleMessage(QNetworkDatagram data)
     OscMessage* msg = reader.getMessage();
 
     QString address = msg->getAddress();	// Get the message address
-    qDebug() << address << "#" << msg->getNumValues();
+    // qDebug() << address << "#" << msg->getNumValues();
 
     // remove from pool : this->dataPool->removeOne()
     this->dataPool->append(msg);

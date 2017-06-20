@@ -35,9 +35,6 @@ public:
     QMap<QString, X32ConfigBtn> *btnMap;
     QMap<QString, X32ConfigRotary> *rotaryMap;
 
-    static QString parseButtonData(QString data);
-    static QString parseChannelName(qint8 channelNumber);
-
 private:
     QMap<QChar, UserctrlBank*> *assignData;
     X32ConsoleAbstract *console;
@@ -60,6 +57,8 @@ public slots:
             assert(btnNr != 0);
             updateBtn(bank, btnNr, data);
         }
+
+        this->console->removeMessage(data);
     }
 
 };

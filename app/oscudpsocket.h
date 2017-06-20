@@ -7,6 +7,8 @@
 #include <QDebug>
 #include <QUdpSocket>
 #include <QNetworkDatagram>
+#include <QQueue>
+#include <QTimer>
 
 #include <osc/reader/OscReader.h>
 #include <osc/reader/OscMessage.h>
@@ -33,8 +35,14 @@ private:
     QUdpSocket *udpSocket;
     QString bullshit = "test";
 
+    QQueue<QByteArray*>* sendQueue;
+    QTimer* sendTimer;
+
 signals:
     void datagramReady(QNetworkDatagram datagram);
+
+private slots:
+    void processSendQueue();
 
 public slots:
     void readPendingDatagrams();

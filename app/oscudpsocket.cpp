@@ -1,6 +1,6 @@
 #include "oscudpsocket.h"
 
-OscUdpSocket::OscUdpSocket(QObject *parent) : QObject(parent)
+OscUdpSocket::OscUdpSocket(QObject *parent) : QObject(parent), sendQueue(new QQueue<QByteArray*>()), sendTimer(new QTimer())
 {
 
 }
@@ -11,6 +11,7 @@ void OscUdpSocket::initSocket()
     udpSocket->bind(QHostAddress("172.16.0.240"), 10050);
 
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
+    connect(sendTimer, SIGNAL(timeout()), this, SLOT(processSendQueue()));
 }
 
 // useless !
@@ -31,6 +32,18 @@ void OscUdpSocket::processDatagram(QNetworkDatagram data)
 
 void OscUdpSocket::sendData(QByteArray *data)
 {
+    QByteArray *dat = new QByteArray(data->data(), data->length());
+    this->sendQueue->enqueue(dat);
+    this->sendTimer->start(15);
+}
+
+void OscUdpSocket::processSendQueue()
+{
+    QByteArray* data = sendQueue->dequeue();
+
+    if(sendQueue->length() == 0)
+        sendTimer->stop();
+
     if(this->udpSocket == nullptr) {
         qDebug() << "What happened here?!";
         this->initSocket();

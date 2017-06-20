@@ -20,7 +20,9 @@ public:
 
     void refreshValues();
 
-protected:
+    static QString parseButtonData(QString data, X32Console *console = nullptr);
+    static QString parseChannelName(qint8 channelNumber, X32Console *console = nullptr);
+
     QMap<qint16, Mutegroup*> *mutegroups;
     QMap<qint16, Channel*> *channels;
     X32Config *config;

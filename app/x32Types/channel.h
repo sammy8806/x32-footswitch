@@ -97,10 +97,18 @@ public slots:
 
         // TODO: Stuff here
 
+        if(address.mid(7, 6) == "config") {
+            if(address.mid(14, 4) == "name") {
+                QString name = data.getValue(0)->toString();
+                name.remove('"');
+                name.remove('"');
+                qDebug() << "[Channel "+QString::number(this->number)+"] Name: " << name.trimmed();
+                config.name = name.trimmed();
+            }
+        }
+
         if(address.mid(7, 3) == "mix") {
-            qDebug() << 1;
             if(address.mid(11,2) == "on") {
-                qDebug() << 1;
                 qint8 isOn = -1;
                 QString isOnTmp = data.getValue(0)->toString();
 
