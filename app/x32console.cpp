@@ -133,26 +133,31 @@ void X32Console::handleNode(QString address, OscMessage& dataPtr)
 
     QString data = dataPtr.getValue(0)->toString();
 
-    QStringList args = data.split(QChar(' '));
-    QString addr = args.at(0);
-    QString value = "";
-    for(int i=1; i<=args.length()-1; i++) {
-        value.append(args.at(i) + " ");
-    }
+    int i = 0;
+    QChar activeChar;
 
-    this->removeMessage(dataPtr);
-    value.remove(0xA);
-    value = value.trimmed();
+    bool inAddress = true;
+    QString addr = "";
+
+    for(; i<data.length() && inAddress; i++) {
+        activeChar = data.at(i);
+
+        if(inAddress && activeChar == ' ') {
+            inAddress = false;
+        }
+        if(inAddress) {
+            addr.append(activeChar);
+        }
+    }
 
     OscMessageComposer composer = OscMessageComposer(addr);
 
     bool hasData = false;
-    QString tmp = "";
     bool inString = false;
-    QChar activeChar;
+    QString tmp = "";
 
-    for(int i=0; i<value.length(); i++) {
-        activeChar = value.at(i);
+    for(; i<data.length(); i++) {
+        activeChar = data.at(i);
 
         if(activeChar == '"' && !inString) {
             inString = true;
