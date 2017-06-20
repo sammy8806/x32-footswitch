@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
     X32Console *console = new X32Console();
 
-    QObject::connect(parser, SIGNAL(receivedStatus(X32Status)), &w, SLOT(updateStatus(X32Status)));
+    // QObject::connect(parser, SIGNAL(receivedStatus(X32Status)), &w, SLOT(updateStatus(X32Status)));
     // QObject::connect(parser, SIGNAL(receivedUserctrl(X32ConfigUserctrl)), &w, SLOT(updateUserctrl(X32ConfigUserctrl)));
 
     QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), console, SLOT(handleMessage(QNetworkDatagram)));

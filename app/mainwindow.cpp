@@ -6,11 +6,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+/*
     this->btnData = new QMap<qint8, UserctrlButton*>();
     for(int i=0; i<12; i++) {
         this->btnData->insert(i, new UserctrlButton());
-    }
+    }*/
 }
 
 MainWindow::~MainWindow()
@@ -24,7 +24,7 @@ void MainWindow::updateStatus(X32Status status)
     this->setWindowTitle("Conntected: " + status.consoleType);
     ui->consoleData->setText(status.consoleName + " (" + status.consoleVersion + ")");
 }
-
+/*
 void MainWindow::updateUserctrl(X32ConfigUserctrl config)
 {
     QList<QPushButton*> btn = {nullptr, nullptr, nullptr, nullptr, ui->btn5, ui->btn6, ui->btn7, ui->btn8, ui->btn9, ui->btn10};
@@ -38,7 +38,7 @@ void MainWindow::updateUserctrl(X32ConfigUserctrl config)
     UserctrlButton *data = this->btnData->value(number);
     data->data = config.buttonData.data;
 }
-
+*/
 void MainWindow::updateChannel(Channel *channel)
 {
     qDebug() << "Updated CH" << channel->getNumber();
@@ -58,7 +58,7 @@ void MainWindow::updateChannel(Channel *channel)
     }
 
     qDebug() << "-> Chan " << channel->number;
-    if(channel->mix.on == X32BoolState::OFF) {
+    if(!channel->mix.on) {
         btn->setStyleSheet("background-color: red;");
     } else {
         btn->setStyleSheet("background-color: green;");
@@ -67,12 +67,12 @@ void MainWindow::updateChannel(Channel *channel)
 
 void MainWindow::on_btn5_clicked()
 {
-    UserctrlButton *btnData = this->btnData->value(5);
+    /*UserctrlButton *btnData = this->btnData->value(5);
     switch (btnData->type) {
     case X32ConfigBtn::BtnMute :
         emit mute(btnData->data.toInt(), 1);
         break;
     default:
         break;
-    }
+    }*/
 }

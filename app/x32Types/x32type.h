@@ -49,11 +49,6 @@ enum X32LcdColors {
     WhiteInvert,
 };
 
-enum X32BoolState {
-    OFF,
-    ON
-};
-
 enum X32HpSlope {
     HP12 = 12,
     HP18 = 18,
@@ -135,26 +130,26 @@ struct ChannelConfig {
 };
 
 struct ChannelDelay {
-    X32BoolState on;
+    bool on;
     float time; // 0.300 .. 500.0 (0.1)
 };
 
 struct ChannelPreamp {
     float trim; // -18.0 .. 18.0 (0.25) # digital sources only ?
-    X32BoolState invert;
-    X32BoolState hpon; // phantom power;
+    bool invert;
+    bool hpon; // phantom power;
     X32HpSlope slope;
     float hpf; // linf 20.0 .. 400.0 (101)
 };
 
 struct FxFilter {
-    X32BoolState on;
+    bool on;
     X32GateFilterType type;
     float f; // logf 20 .. 20000 (201)
 };
 
 struct FxGate {
-    X32BoolState on;
+    bool on;
     X32GateMode mode;
     float thr;   // -80.00 .. 0    (0.5) dB linf
     float range;   // 3.00 .. 60   (1.0) dB linf
@@ -166,7 +161,7 @@ struct FxGate {
 };
 
 struct ChannelDynamic {
-    X32BoolState on;
+    bool on;
     X32DynamicMode mode;
     X32DynamicDetermination det;
     X32DynamicEnv env;
@@ -180,12 +175,12 @@ struct ChannelDynamic {
     X32FxInsertPos pos;
     qint8 keysrc;  // Off, In 01..32, Aux 01..06, USB L..R, FX 1L..4R, Bus 01..16
     float mix; // linf 0 .. 100 (5) %
-    X32BoolState automix; // named "auto"
+    bool automix; // named "auto"
     FxFilter filter;
 };
 
 struct ChannelInsert {
-    X32BoolState on;
+    bool on;
     X32FxInsertPos pos;
     X32InsertSelect sel;
 };
@@ -198,12 +193,12 @@ struct EqSingle {
 };
 
 struct EQ {
-    X32BoolState on;
+    bool on;
     QList<EqSingle> eq;
 };
 
 struct ChannelMixSend {
-    X32BoolState on;
+    bool on;
     float level; // level -90 .. 10 (161)
 };
 
@@ -213,11 +208,11 @@ struct ChannelMixSendStereo : ChannelMixSend {
 };
 
 struct ChannelMix {
-    X32BoolState on;
+    bool on;
     float fader; // level 0 .. 1 (1/1024)   dB
-    X32BoolState st; // stereo?
+    bool st; // stereo?
     float pan; // linf -100 .. 100 (2)
-    X32BoolState mono; // Enabled LCR/Mono?
+    bool mono; // Enabled LCR/Mono?
     float mlevel; // level -90 .. 10 (161) // LCR/Mono level?
 
     QList<ChannelMixSend> mix; // Beware of ChannelMixSendStereo
@@ -227,6 +222,81 @@ struct ChannelMix {
 struct ChannelAutomix {
     X32AutomixGroup group;
     float weight; // linf -12 .. 12 (0.5)
+};
+
+struct ChLink {
+    bool link1_2;
+    bool link3_4;
+    bool link5_6;
+    bool link7_8;
+    bool link9_10;
+    bool link11_12;
+    bool link13_14;
+    bool link15_16;
+    bool link17_18;
+    bool link19_20;
+    bool link21_22;
+    bool link23_24;
+    bool link25_26;
+    bool link27_28;
+    bool link29_30;
+    bool link31_32;
+};
+
+struct AuxLink {
+    bool link1_2;
+    bool link3_4;
+    bool link5_6;
+    bool link7_8;
+};
+
+struct FxLink {
+    bool link1_2;
+    bool link3_4;
+    bool link5_6;
+    bool link7_8;
+};
+
+struct BusLink {
+    bool link1_2;
+    bool link3_4;
+    bool link5_6;
+    bool link7_8;
+    bool link9_10;
+    bool link11_12;
+    bool link13_14;
+    bool link15_16;
+};
+
+struct MatrixLink {
+    bool link1_2;
+    bool link3_4;
+    bool link5_6;
+};
+
+struct MuteConfig {
+    bool mute1;
+    bool mute2;
+    bool mute3;
+    bool mute4;
+    bool mute5;
+    bool mute6;
+};
+
+struct LinkConfig {
+    bool hadly; // Delay + HA
+    bool eq; // EQ
+    bool dyn; // Dynamics
+    bool fdrmute; // Mute/Fader
+};
+
+struct MonoConfig {
+    bool mode; // LR+M / LCR
+    bool link; // M/C depends on MainLR
+};
+
+struct UserctrlConfig {
+    X32LcdColors color;
 };
 
 class X32Type : public QObject

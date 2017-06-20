@@ -30,6 +30,9 @@ public slots:
         // mix.on = X32BoolState::OFF;
     }
 
+private:
+    X32ConsoleAbstract* console;
+
 public:
     qint8 getNumber() { return this->number; }
 
@@ -45,9 +48,6 @@ public:
 
 signals:
     void updated(Channel* channel);
-
-private:
-    X32ConsoleAbstract* console;
 
 public slots:
     X32_INTERNAL void findMessage(QString address, OscMessage& data) {
@@ -66,13 +66,9 @@ public slots:
             if(address.mid(11,2) == "on") {
                 qDebug() << 1;
                 qint8 isOn = data.getValue(0)->toInteger();
-                if(isOn == 0) {
-                    qDebug() << "is off - " << address;
-                    mix.on = X32BoolState::OFF;
-                } else {
-                    qDebug() << "is on - " << address;
-                    mix.on = X32BoolState::ON;
-                }
+
+                qDebug() << "is " << (isOn ? "on" : "off") << " - " << address;
+                mix.on = isOn;
             }
         }
 

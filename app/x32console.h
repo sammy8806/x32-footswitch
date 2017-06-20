@@ -9,6 +9,8 @@
 #include "x32Types/x32type.h"
 #include "x32Types/channel.h"
 #include "x32Types/mutegroup.h"
+#include "x32Types/x32configuserctrl.h"
+#include "x32Types/config.h"
 
 class X32Console : public X32ConsoleAbstract
 {
@@ -17,8 +19,10 @@ public:
     explicit X32Console(QObject *parent = nullptr);
 
 protected:
+
     QMap<qint16, Mutegroup*> *mutegroups;
     QMap<qint16, Channel*> *channels;
+    X32Config *config;
     // QMap<qint16, Cue> cues;
     // QMap<qint16, Scene> scenes;
 

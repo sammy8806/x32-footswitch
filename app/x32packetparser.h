@@ -19,7 +19,7 @@
 
 #include <x32Types/x32type.h>
 #include <x32Types/x32status.h>
-#include <x32Types/x32configuserctrl.h>
+// #include <x32Types/x32configuserctrl.h>
 
 class X32PacketParser : public QObject
 {
@@ -36,7 +36,7 @@ private:
 
 signals:
     void receivedStatus(X32Status status);
-    void receivedUserctrl(X32ConfigUserctrl config);
+    // void receivedUserctrl(X32ConfigUserctrl config);
 
 public slots:
     void handleOscReader(QNetworkDatagram data);

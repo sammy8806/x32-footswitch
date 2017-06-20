@@ -14,8 +14,8 @@ void X32PacketParser::parseStatusData(OscMessage *msg)
 
 void X32PacketParser::handleTypeData(OscMessage *msg)
 {
+    /*
     QString addr = msg->getAddress();
-
     // /status
     // /xstatus
     // /info
@@ -36,6 +36,7 @@ void X32PacketParser::handleTypeData(OscMessage *msg)
         X32ConfigUserctrl config(msg);
         emit receivedUserctrl(config);
     }
+    */
 }
 
 void X32PacketParser::handleOscReader(QNetworkDatagram data)
@@ -48,6 +49,5 @@ void X32PacketParser::handleOscReader(QNetworkDatagram data)
     QString address = msg->getAddress();	// Get the message address
     qDebug() << address << "#" << msg->getNumValues();
 
-    emit
     // handleTypeData(msg);
 }

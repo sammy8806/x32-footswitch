@@ -13,7 +13,6 @@
 #include <QListWidgetItem>
 
 #include <x32Types/x32status.h>
-#include <x32Types/x32configuserctrl.h>
 #include <x32Types/channel.h>
 #include <x32Types/mutegroup.h>
 
@@ -34,11 +33,11 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QMap<qint8, UserctrlButton*> *btnData;
+    // QMap<qint8, UserctrlButton*> *btnData;
 
 public slots:
     void updateStatus(X32Status status);
-    void updateUserctrl(X32ConfigUserctrl config);
+    // void updateUserctrl(X32ConfigUserctrl config);
     void updateChannel(Channel *channel);
 
 private slots:

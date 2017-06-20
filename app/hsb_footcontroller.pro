@@ -43,7 +43,8 @@ SOURCES += \
     x32console.cpp \
     backgroundheartbeat.cpp \
     x32Types/mutegroup.cpp \
-    x32Types/channel.cpp
+    x32Types/channel.cpp \
+    x32Types/config.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -56,6 +57,7 @@ HEADERS += \
     x32console.h \
     backgroundheartbeat.h \
     x32Types/mutegroup.h \
-    x32Types/channel.h
+    x32Types/channel.h \
+    x32Types/config.h
 
 FORMS += mainwindow.ui

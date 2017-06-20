@@ -5,6 +5,7 @@ X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
     this->dataPool = new QVector<OscMessage*>();
     this->mutegroups = new QMap<qint16, Mutegroup*>();
     this->channels = new QMap<qint16, Channel*>();
+    this->config = new X32Config(this, this);
 
     for(int i=0; i<8; i++) {
         Mutegroup *mg = new Mutegroup(this, i, false, this);
@@ -18,6 +19,8 @@ X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
         connect(chan, SIGNAL(updated(Channel*)), this, SLOT(updatedChannel(Channel*)));
         this->channels->insert(i, chan);
     }
+
+    connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), config, SLOT(findMessage(QString,OscMessage&)));
 }
 
 void X32ConsoleAbstract::setSocket(OscUdpSocket *socket)
@@ -41,6 +44,8 @@ void X32Console::handleMessage(QNetworkDatagram data)
     qDebug() << "Data: " << data.data();
 
     QByteArray byteData(data.data());
+
+    // TODO: Meter Handling
 
     OscReader reader(&byteData);
     OscMessage* msg = reader.getMessage();
