@@ -63,11 +63,14 @@ void X32ConfigUserctrl::updateBtn(UserctrlBank *bank, qint8 btnNr, OscMessage &d
     qDebug() << "Updating Buton: " << btnNr;
     QString btnData = data.getValue(0)->toString();
 
-    if(btnData.length() == 0) return;
-
     UserctrlButton btn;
-    btn.type = this->btnMap->value(btnData.at(0));
-    btn.data = btnData;
+
+    if(btnData.length() != 0) {
+        btn.type = this->btnMap->value(btnData.at(0));
+        btn.data = btnData;
+    } else {
+        btn.data = "";
+    }
 
     qDebug() << "Btn" << btnNr << " => " << btnData;
 

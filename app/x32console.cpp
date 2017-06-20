@@ -30,6 +30,8 @@ QString X32Console::parseButtonData(QString data, X32Console* console)
 {
     QString output;
 
+    if(data.length() == 0) return output;
+
     if(data.at(0) == 'O') {
         output = "Mute";
 
@@ -136,12 +138,12 @@ void X32Console::handleNode(QString address, OscMessage& dataPtr)
 
     value.remove(0xA);
 
-    qDebug() << "Handling node-answer for " << addr;
+    // qDebug() << "Handling node-answer for " << addr;
 
     OscMessageComposer composer = OscMessageComposer(addr);
     composer.pushString(value.trimmed());
 
-    qDebug() << "Value: " << value;
+    // qDebug() << "Value: " << value;
 
     OscReader reader(composer.getBytes());
     OscMessage* msg = reader.getMessage();
