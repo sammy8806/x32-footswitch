@@ -70,9 +70,9 @@ void MainWindow::updateChannel(Channel *channel)
     }
 }
 
-void MainWindow::on_btn5_clicked()
+void MainWindow::processBtnClick(qint8 btn)
 {
-    UserctrlButton *btnData = this->btnData->value(5);
+    UserctrlButton *btnData = this->btnData->value(btn);
     switch (btnData->type) {
     case X32ConfigBtn::BtnMute :
         emit mute(btnData->data.right(2).toInt());
@@ -80,4 +80,34 @@ void MainWindow::on_btn5_clicked()
     default:
         break;
     }
+}
+
+void MainWindow::on_btn5_clicked()
+{
+    processBtnClick(5);
+}
+
+void MainWindow::on_btn6_clicked()
+{
+    processBtnClick(6);
+}
+
+void MainWindow::on_btn7_clicked()
+{
+    processBtnClick(7);
+}
+
+void MainWindow::on_btn8_clicked()
+{
+    processBtnClick(8);
+}
+
+void MainWindow::on_btn9_clicked()
+{
+    processBtnClick(9);
+}
+
+void MainWindow::on_btn10_clicked()
+{
+    processBtnClick(10);
 }
