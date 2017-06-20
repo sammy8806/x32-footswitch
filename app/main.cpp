@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
     MainWindow w;
 
     OscUdpSocket *sock = new OscUdpSocket();
-    // X32PacketParser *parser = new X32PacketParser(sock);
 
     BackgroundHeartbeat *heartbeat = new BackgroundHeartbeat();
     QObject::connect(heartbeat, SIGNAL(sendMessage(QByteArray)), sock, SLOT(sendMessage(QByteArray)));
@@ -23,9 +22,6 @@ int main(int argc, char *argv[])
     console->setSocket(sock);
 
     w.setConsole(console);
-
-    // QObject::connect(parser, SIGNAL(receivedStatus(X32Status)), &w, SLOT(updateStatus(X32Status)));
-    // QObject::connect(parser, SIGNAL(receivedUserctrl(X32ConfigUserctrl)), &w, SLOT(updateUserctrl(X32ConfigUserctrl)));
 
     QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), console, SLOT(handleMessage(QNetworkDatagram)));
 

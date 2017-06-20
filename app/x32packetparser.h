@@ -29,7 +29,6 @@ public:
 
 protected:
     void parseStatusData(OscMessage* msg);
-    void handleTypeData(OscMessage* msg);
 
 private:
     QVector<X32Type> types;

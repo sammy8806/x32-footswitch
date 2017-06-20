@@ -12,33 +12,6 @@ void X32PacketParser::parseStatusData(OscMessage *msg)
         qDebug() << "info#" << i << " " << msg->getValue(i)->toString();
 }
 
-void X32PacketParser::handleTypeData(OscMessage *msg)
-{
-    /*
-    QString addr = msg->getAddress();
-    // /status
-    // /xstatus
-    // /info
-    QRegExp x32status = X32Status::typeRegExp();
-    if(x32status.exactMatch(addr)) {
-        qDebug() << "PacketType: X32Status";
-
-        X32Status status(msg);
-        qDebug() << "Console: " << status.consoleName << "(" << status.consoleVersion << ")";
-        emit receivedStatus(status);
-    }
-
-    // /config/userctrl
-    QRegExp x32userctrl = X32ConfigUserctrl::typeRegExp();
-    if(x32userctrl.exactMatch(addr)) {
-        qDebug() << "PacketType: X32ConfigUserctrl";
-
-        X32ConfigUserctrl config(msg);
-        emit receivedUserctrl(config);
-    }
-    */
-}
-
 void X32PacketParser::handleOscReader(QNetworkDatagram data)
 {
     QByteArray byteData(data.data());
