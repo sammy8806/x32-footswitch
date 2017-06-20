@@ -16,7 +16,7 @@ class Channel : public QObject {
 
 public:
     Channel(X32ConsoleAbstract *console, qint8 number, QObject *parent = nullptr): QObject(parent),
-        console(console), number(number), refreshTimer(new QTimer()) {
+        console(console), refreshTimer(new QTimer()), number(number) {
         // OscMessageComposer mix("/subscribe");
         // mix.pushString("/ch/01/mix/on");
         // mix.pushInt32(10);
