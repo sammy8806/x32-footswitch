@@ -136,6 +136,7 @@ void X32Console::handleNode(QString address, OscMessage& dataPtr)
         value.append(args.at(i));
     }
 
+    this->removeMessage(dataPtr);
     value.remove(0xA);
 
     // qDebug() << "Handling node-answer for " << addr;
