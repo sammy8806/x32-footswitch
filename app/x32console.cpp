@@ -126,7 +126,6 @@ void X32Console::handleMessage(QNetworkDatagram data)
     emit distributeMessage(msg->getAddress(), *msg);
 }
 
-// TODO: Let's get this working properly
 void X32Console::handleNode(QString address, OscMessage& dataPtr)
 {
     if(address.left(5) != "node\0x00") return;

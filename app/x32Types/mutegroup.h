@@ -49,7 +49,10 @@ public slots:
         if(address.left(12) != "/config/mute") return;
         qDebug() << "Mutegroup relevant";
 
-        this->state = data.getValue(number - 1)->toInteger();
+        if(data.getNumValues() == 6)
+            this->state = data.getValue(number - 1)->toInteger();
+        else
+            this->state = data.getValue(0)->toInteger();
 
         if(number >= 6)
             this->console->removeMessage(data);
