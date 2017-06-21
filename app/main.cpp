@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     sock->sendData(msg2.getBytes());
     */
 
-    w.show();
+    w.showMaximized();
 
     return a.exec();
 }
