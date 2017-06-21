@@ -29,6 +29,9 @@ protected:
     QVector<OscMessage*> *dataPool;
 };
 
+#define MAX_CHAN 32
+#define MAX_MUTEGROUP 6
+
 #define CHAN_NORMAL_MAX 31
 #define CHAN_AUX_MAX 39
 #define CHAN_FX_MAX 47

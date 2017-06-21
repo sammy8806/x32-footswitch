@@ -9,13 +9,13 @@ X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
     this->config = new X32Config(this, this);
     connect(config->userctrl, SIGNAL(updatedButton(UserctrlBank*,qint8)), this, SLOT(updatedUserctrlButton(UserctrlBank*,qint8)));
 
-    for(int i=0; i<8; i++) {
+    for(int i=1; i<=MAX_MUTEGROUP; i++) {
         Mutegroup *mg = new Mutegroup(this, i, false, this);
         connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), mg, SLOT(findMessage(QString,OscMessage&)));
         this->mutegroups->insert(i, mg);
     }
 
-    for(int i=1; i<=32; i++) {
+    for(int i=1; i<=MAX_CHAN; i++) {
         Channel *chan = new Channel(this, i, this);
         connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), chan, SLOT(findMessage(QString,OscMessage&)));
         connect(chan, SIGNAL(updated(Channel*)), this, SLOT(updatedChannel(Channel*)));
@@ -83,10 +83,10 @@ QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
 
 void X32Console::refreshValues()
 {
-    for(int i=1; i<=32; i++)
+    for(int i=1; i<=MAX_CHAN; i++)
         this->channels->value(i)->refresh();
 
-    for(int i=0; i<8; i++)
+    for(int i=1; i<=MAX_MUTEGROUP; i++)
         this->mutegroups->value(i)->refresh();
 }
 
@@ -167,8 +167,9 @@ void X32Console::handleNode(QString address, OscMessage& dataPtr)
             inString = true;
             hasData = true;
         } else if(activeChar == ' ' && !inString) {
+TYPE_GUESS:
             if(tmp == "OFF" || tmp == "ON") { // Bool
-                composer.pushBool( tmp == "ON" );
+                composer.pushInt32( tmp == "ON" );
             } else if(tmp.contains('.')) {
                 bufFloat = tmp.toFloat(&formatOk);
                 if(!formatOk) goto PUSH_STRING;
@@ -195,8 +196,7 @@ PUSH_STRING:
     }
 
     if(tmp.length() != 0 || ( hasData && tmp.length() == 0 )) {
-        composer.pushString(tmp);
-        tmp.clear();
+        goto TYPE_GUESS;
     }
 
     // qDebug() << "Handling node-answer for " << addr;
@@ -228,11 +228,17 @@ void X32Console::mute(qint8 chan)
 {
     bool status;
 
-    if(chan <= 31)
+    if(chan <= CHAN_NORMAL_MAX)
         status = !channels->value(chan+1)->mix.on;
+
+    if(chan > CHAN_DCA_MAX && chan <= CHAN_MUTEGROUP_MAX)
+        status = !mutegroups->value(chan - CHAN_DCA_MAX)->state;
 
     qDebug() << "[Console] " << (status ? "" : "Un") << "Mute " << chan;
 
-    if(chan <= 31)
+    if(chan <= CHAN_NORMAL_MAX)
         channels->value(chan+1)->mute(status);
+
+    if(chan > CHAN_DCA_MAX && chan <= CHAN_MUTEGROUP_MAX)
+        mutegroups->value(chan - CHAN_DCA_MAX)->mute(status);
 }

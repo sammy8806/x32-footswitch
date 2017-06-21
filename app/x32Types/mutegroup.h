@@ -17,7 +17,7 @@ public:
     void mute(bool status) {  // mix/on
         qDebug() << "[MuteGroup " + QString::number(number)+1 + "] " + (status ? "" : "Un") + "Mute";
 
-        OscMessageComposer mute("/config/mute/" + number);
+        OscMessageComposer mute("/config/mute/" + QString::number(number));
         mute.pushInt32((int)status);
         this->console->sendMessage(mute);
 
@@ -31,7 +31,7 @@ public:
 public slots:
     void timedRefresh() {
         OscMessageComposer mute("/node");
-        mute.pushString("config/mute/" + number);
+        mute.pushString("config/mute");
         this->console->sendMessage(mute);
     }
 
@@ -40,7 +40,7 @@ private:
     X32ConsoleAbstract *console;
     QTimer *refreshTimer;
 
-protected:
+public:
     qint16 number;
     bool state;
 
@@ -49,13 +49,10 @@ public slots:
         if(address.left(12) != "/config/mute") return;
         qDebug() << "Mutegroup relevant";
 
-        bool ok = false;
-        qint8 grp = address.mid(14,1).toInt(&ok);
-        if(grp != this->number) return;
+        this->state = data.getValue(number - 1)->toInteger();
 
-        this->state = data.getValue(0)->toInteger();
-
-        this->console->removeMessage(data);
+        if(number >= 6)
+            this->console->removeMessage(data);
     }
 };
 

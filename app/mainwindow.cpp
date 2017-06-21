@@ -74,7 +74,7 @@ void MainWindow::processBtnClick(qint8 btn)
 {
     UserctrlButton *btnData = this->btnData->value(btn);
     switch (btnData->type) {
-    case X32ConfigBtn::BtnMute :
+    case X32ConfigBtn::BtnMute:
         emit mute(btnData->data.right(2).toInt());
         break;
     default:
