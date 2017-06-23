@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     QObject::connect(console, SIGNAL(updateUserctrlButton(UserctrlBank*,qint8)), &w, SLOT(updateUserctrl(UserctrlBank*,qint8)));
 
     QObject::connect(&w, SIGNAL(mute(qint8)), console, SLOT(mute(qint8)));
+    QObject::connect(&w, SIGNAL(recall(QString)), console, SLOT(recall(QString)));
 
     sock->initSocket();
     console->refreshValues();
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
         sock->sendData(msg.getBytes());
     }
 
-    for(int i=5; i<=10; i++) {
+    for(int i=5; i<12; i++) {
         OscMessageComposer msg("/config/userctrl/A/btn/" + QString::number(i));
         sock->sendData(msg.getBytes());
     }

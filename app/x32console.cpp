@@ -241,3 +241,35 @@ void X32Console::mute(qint8 chan)
     if(chan > CHAN_DCA_MAX && chan <= CHAN_MUTEGROUP_MAX)
         mutegroups->value(chan - CHAN_DCA_MAX)->mute(status);
 }
+
+void X32Console::recall(QString target)
+{
+    qint8 type = target.left(1).toInt();
+    qint8 toLoad = target.right(2).toInt();
+
+    switch (type) {
+    case 0: // Scene
+    {
+        OscMessageComposer msgScene("/-action/goscene");
+        msgScene.pushInt32(toLoad);
+        socket->sendData(msgScene.getBytes());
+    }
+        break;
+
+    case 2: // Snippet
+    {
+        OscMessageComposer msgSnippet("/-action/gosnippet");
+        msgSnippet.pushInt32(toLoad);
+        socket->sendData(msgSnippet.getBytes());
+    }
+        break;
+
+    case 4: // Cue
+    {
+        OscMessageComposer msgCue("/-action/gocue");
+        msgCue.pushInt32(toLoad);
+        socket->sendData(msgCue.getBytes());
+    }
+        break;
+    }
+}

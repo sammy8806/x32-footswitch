@@ -32,10 +32,12 @@ void MainWindow::updateStatus(X32Status status)
 
 void MainWindow::updateUserctrl(UserctrlBank *bank, qint8 btnNr)
 {
-    QList<QPushButton*> btn = {nullptr, nullptr, nullptr, nullptr, ui->btn5, ui->btn6, ui->btn7, ui->btn8, ui->btn9, ui->btn10};
+    QList<QPushButton*> btn = {nullptr, nullptr, nullptr, nullptr, ui->btn5, ui->btn6, ui->btn7, nullptr, ui->btn8, ui->btn9, ui->btn10, nullptr};
 
     QString btnData = bank->data->value(btnNr).data;
     QString btnTitle = X32Console::parseButtonData(btnData, console);
+    if(btn.at(btnNr - 1) == nullptr) return;
+
     btn.at(btnNr - 1)->setText(btnTitle);
     qDebug() << "Set: " << btnData << btnTitle;
 
@@ -77,10 +79,17 @@ void MainWindow::processBtnClick(qint8 btn)
     case X32ConfigBtn::BtnMute:
         emit mute(btnData->data.right(2).toInt());
         break;
+    case X32ConfigBtn::BtnRecall:
+        emit recall(btnData->data.right(3));
+        break;
     default:
         break;
     }
 }
+
+// Layout:
+// 5   6   7  |  8
+// 9   10  11 |  12
 
 void MainWindow::on_btn5_clicked()
 {
@@ -99,15 +108,15 @@ void MainWindow::on_btn7_clicked()
 
 void MainWindow::on_btn8_clicked()
 {
-    processBtnClick(8);
+    processBtnClick(9);
 }
 
 void MainWindow::on_btn9_clicked()
 {
-    processBtnClick(9);
+    processBtnClick(10);
 }
 
 void MainWindow::on_btn10_clicked()
 {
-    processBtnClick(10);
+    processBtnClick(11);
 }

@@ -42,6 +42,7 @@ public slots:
     void updatedUserctrlButton(UserctrlBank *bank, qint8 btnNr);
 
     void mute(qint8 chan);
+    void recall(QString target);
 };
 
 #endif // X32CONSOLE_H

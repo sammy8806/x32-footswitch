@@ -48,19 +48,15 @@ public slots:
 
 private slots:
     void on_btn5_clicked();
-
     void on_btn6_clicked();
-
     void on_btn8_clicked();
-
     void on_btn7_clicked();
-
     void on_btn9_clicked();
-
     void on_btn10_clicked();
 
 signals:
     void mute(qint8 channel);
+    void recall(QString target);
 };
 
 #endif // MAINWINDOW_H
