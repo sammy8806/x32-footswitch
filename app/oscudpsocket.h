@@ -37,6 +37,7 @@ private:
 
     QQueue<QByteArray*>* sendQueue;
     QTimer* sendTimer;
+    QString hostAddr;
 
 signals:
     void datagramReady(QNetworkDatagram datagram);

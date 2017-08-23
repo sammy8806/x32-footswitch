@@ -1,6 +1,6 @@
 #include "oscudpsocket.h"
 
-OscUdpSocket::OscUdpSocket(QObject *parent) : QObject(parent), sendQueue(new QQueue<QByteArray*>()), sendTimer(new QTimer())
+OscUdpSocket::OscUdpSocket(QObject *parent) : QObject(parent), sendQueue(new QQueue<QByteArray*>()), sendTimer(new QTimer()), hostAddr(QString())
 {
 
 }
@@ -18,6 +18,18 @@ void OscUdpSocket::initSocket()
 
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
     connect(sendTimer, SIGNAL(timeout()), this, SLOT(processSendQueue()));
+
+    if(this->hostAddr == "") {
+        this->hostAddr = "172.16.1.100";
+
+        QString envHost = QString(qgetenv("X32HOST"));
+        if(envHost != "") {
+            qDebug() << "Using envvar X32HOST for target address";
+            this->hostAddr = envHost;
+        }
+
+        qDebug() << "Setting connection Address to: " << this->hostAddr;
+    }
 }
 
 // useless !
@@ -57,7 +69,7 @@ void OscUdpSocket::processSendQueue()
 
     assert(this->udpSocket != nullptr);
 
-    qint64 bytesWritten = this->udpSocket->writeDatagram(*data, QHostAddress("172.16.1.100"), 10023);
+    qint64 bytesWritten = this->udpSocket->writeDatagram(*data, QHostAddress(this->hostAddr), 10023);
 
     // qint64 bytesWritten = udpSocket->write(*data);
     if(bytesWritten < 0) {
