@@ -32,22 +32,6 @@ void OscUdpSocket::initSocket()
     }
 }
 
-// useless !
-void OscUdpSocket::processDatagram(QNetworkDatagram data)
-{
-    qDebug() << "Data: " << data.data();
-
-    QByteArray byteData(data.data());
-
-    OscReader reader(&byteData);
-    OscMessage* msg = reader.getMessage();
-
-    QString address = msg->getAddress();	// Get the message address
-    qDebug() << address << "#" << msg->getNumValues();
-
-    delete msg;
-}
-
 void OscUdpSocket::sendData(QByteArray *data)
 {
     QByteArray *dat = new QByteArray(data->data(), data->length());

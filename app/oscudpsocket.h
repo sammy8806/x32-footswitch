@@ -27,7 +27,6 @@ public:
     explicit OscUdpSocket(QObject *parent = nullptr);
 
     void initSocket();
-    void processDatagram(QNetworkDatagram data);
 
     void sendData(QByteArray* data);
 
