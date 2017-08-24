@@ -74,7 +74,11 @@ void MainWindow::updateChannel(Channel *channel)
 
 void MainWindow::processBtnClick(qint8 btn)
 {
+    qDebug() << "Pressed Btn" << btn;
+
     UserctrlButton *btnData = this->btnData->value(btn);
+    if(btnData == nullptr) return;
+
     switch (btnData->type) {
     case X32ConfigBtn::BtnMute:
         emit mute(btnData->data.right(2).toInt());
@@ -84,6 +88,19 @@ void MainWindow::processBtnClick(qint8 btn)
         break;
     default:
         break;
+    }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    qDebug() << "Pressed Key:" << event->key();
+
+    int key = event->key();
+
+    if(key >= Qt::Key_F1 && key <= Qt::Key_F9) {
+        int fKey = key - Qt::Key_F1 + 1;
+        qDebug() << "Pressed: F" << fKey;
+        processBtnClick(fKey + 4 + ((fKey > 3) ? 1 : 0) );
     }
 }
 

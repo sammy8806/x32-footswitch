@@ -11,6 +11,7 @@
 #include <QListWidget>
 #include <QTreeWidgetItem>
 #include <QListWidgetItem>
+#include <QKeyEvent>
 
 #include <x32Types/x32status.h>
 #include <x32Types/channel.h>
@@ -34,6 +35,8 @@ public:
     ~MainWindow();
 
     void processBtnClick(qint8 btn);
+
+    void keyPressEvent(QKeyEvent* event) override;
     
 private:
     Ui::MainWindow *ui;
