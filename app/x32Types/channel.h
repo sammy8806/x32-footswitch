@@ -69,7 +69,7 @@ private:
     QList<QString> *props;
     QTimer *refreshTimer;
 
-    QBool stateDirty = false;
+    bool stateDirty = false;
 
 public:
     qint8 getNumber() { return this->number; }
