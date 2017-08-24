@@ -69,6 +69,8 @@ private:
     QList<QString> *props;
     QTimer *refreshTimer;
 
+    QBool stateDirty = false;
+
 public:
     qint8 getNumber() { return this->number; }
 
@@ -99,6 +101,8 @@ public slots:
 
         if(address.mid(7, 6) == "config") {
             if(address.mid(14, 4) == "name") {
+                this->stateDirty = true;
+
                 QString name = data.getValue(0)->toString();
                 name.remove('"');
                 name.remove('"');
@@ -109,6 +113,8 @@ public slots:
 
         if(address.mid(7, 3) == "mix") {
             if(address.mid(11,2) == "on") {
+                this->stateDirty = true;
+
                 bool isOn;
                 QString isOnTmp = data.getValue(0)->toString();
 
@@ -125,7 +131,10 @@ public slots:
             }
         }
 
-        emit updated(this);
+        if(this->stateDirty) {
+            emit updated(this);
+            this->stateDirty = false;
+        }
 
         console->removeMessage(data);
     }
