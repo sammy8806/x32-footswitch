@@ -224,6 +224,12 @@ void X32Console::updatedUserctrlButton(UserctrlBank *bank, qint8 btnNr)
     emit updateUserctrlButton(bank, btnNr);
 }
 
+void X32Console::updatedUserctrlBank(UserctrlBank *bank)
+{
+    qDebug() << "[Console] Updated UserCtrl Bank " << bank->bank << " with color " << bank->color;
+    emit updateUserctrlBank(bank);
+}
+
 void X32Console::mute(qint8 chan)
 {
     bool status;
