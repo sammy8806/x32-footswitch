@@ -123,8 +123,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
     int key = event->key();
 
-    if(key >= Qt::Key_F1 && key <= Qt::Key_F3 ||
-        key >= Qt::Key_F5 && key <= Qt::Key_F7) {
+    if( (key >= Qt::Key_F1 && key <= Qt::Key_F3) ||
+        (key >= Qt::Key_F5 && key <= Qt::Key_F7)
+    ) {
         int fKey = key - Qt::Key_F1 + 1;
         qDebug() << "Pressed: F" << fKey;
 
