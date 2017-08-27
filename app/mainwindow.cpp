@@ -127,6 +127,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         key >= Qt::Key_F5 && key <= Qt::Key_F7) {
         int fKey = key - Qt::Key_F1 + 1;
         qDebug() << "Pressed: F" << fKey;
+
+        // Skip from Btn7 to Btn9
         processBtnClick(fKey + 4 + ((fKey > 3) ? 1 : 0) );
     }
 }
