@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
         sock->sendData(msg.getBytes());
     }
 
-    for(QChar bank = 'A'; bank <= QChar('C'); bank++) {
+    for(char bank = 'A'; bank <= 'C'; bank++) {
         OscMessageComposer msg("/config/userctrl/" + QString(bank) + "/color");
         sock->sendData(msg.getBytes());
 
