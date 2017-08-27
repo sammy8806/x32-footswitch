@@ -34,12 +34,14 @@ signals:
     X32_INTERNAL void distributeMessage(QString address, OscMessage& dataPtr);
     void updateChannel(Channel* channel);
     void updateUserctrlButton(UserctrlBank *bank, qint8 btnNr);
+    void updateUserctrlBank(UserctrlBank* bank);
 
 public slots:
     void handleMessage(QNetworkDatagram data);
     void handleNode(QString address, OscMessage& dataPtr);
     void updatedChannel(Channel* channel);
     void updatedUserctrlButton(UserctrlBank *bank, qint8 btnNr);
+    void updatedUserctrlBank(UserctrlBank* bank);
 
     void mute(qint8 chan);
     void recall(QString target);

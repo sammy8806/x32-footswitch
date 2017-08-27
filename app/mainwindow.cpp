@@ -8,9 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->btnData = new QMap<qint8, UserctrlButton*>();
-    for(int i=0; i<12; i++) {
+    for(int i=0; i<12*3; i++) {
         this->btnData->insert(i, new UserctrlButton());
     }
+
+    this->btn = {nullptr, nullptr, nullptr, nullptr, ui->btn5, ui->btn6, ui->btn7, nullptr, ui->btn8, ui->btn9, ui->btn10, nullptr};
 }
 
 void MainWindow::setConsole(X32Console *console)
@@ -32,18 +34,42 @@ void MainWindow::updateStatus(X32Status status)
 
 void MainWindow::updateUserctrl(UserctrlBank *bank, qint8 btnNr)
 {
-    QList<QPushButton*> btn = {nullptr, nullptr, nullptr, nullptr, ui->btn5, ui->btn6, ui->btn7, nullptr, ui->btn8, ui->btn9, ui->btn10, nullptr};
-
     QString btnData = bank->data->value(btnNr).data;
     QString btnTitle = X32Console::parseButtonData(btnData, console);
-    if(btn.at(btnNr - 1) == nullptr) return;
+    if(this->btn.at(btnNr - 1) == nullptr) return;
 
-    btn.at(btnNr - 1)->setText(btnTitle);
+    this->btn.at(btnNr - 1)->setText(btnTitle);
     qDebug() << "Set: " << btnData << btnTitle;
 
     UserctrlButton *data = this->btnData->value(btnNr);
     data->type = bank->data->value(btnNr).type;
     data->data = btnData;
+}
+
+void MainWindow::updateUserctrl(UserctrlBank *bank)
+{
+    QString targetColor = "";
+    if(bank->color == 1) {
+        targetColor = "red";
+    } else if (bank->color == 2) {
+        targetColor = "green";
+    } else if (bank->color == 3) {
+        targetColor = "yellow";
+    } else if (bank->color == 4) {
+        targetColor = "blue";
+    } else if (bank->color == 5) {
+        targetColor = "magenta";
+    } else if (bank->color == 6) {
+        targetColor = "cyan";
+    } else if (bank->color == 7) {
+        targetColor = "white";
+    } else {
+        return;
+    }
+
+    for(QPushButton *btn : this->btn) {
+        btn->setStyleSheet("background-color: " + targetColor + ";");
+    }
 }
 
 void MainWindow::updateChannel(Channel *channel)
@@ -97,11 +123,17 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
     int key = event->key();
 
-    if(key >= Qt::Key_F1 && key <= Qt::Key_F9) {
+    if(key >= Qt::Key_F1 && key <= Qt::Key_F3 ||
+        key >= Qt::Key_F5 && key <= Qt::Key_F7) {
         int fKey = key - Qt::Key_F1 + 1;
         qDebug() << "Pressed: F" << fKey;
         processBtnClick(fKey + 4 + ((fKey > 3) ? 1 : 0) );
     }
+}
+
+void MainWindow::switchBank(int bank)
+{
+
 }
 
 // Layout:

@@ -338,6 +338,7 @@ typedef QMap<qint8, UserctrlButton> UserctrlBankData;
 
 struct UserctrlBank {
     QChar bank;
+    qint8 color;
     UserctrlBankData *data;
 };
 

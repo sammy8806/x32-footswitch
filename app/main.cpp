@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(console, SIGNAL(updateChannel(Channel*)), &w, SLOT(updateChannel(Channel*)));
     QObject::connect(console, SIGNAL(updateUserctrlButton(UserctrlBank*,qint8)), &w, SLOT(updateUserctrl(UserctrlBank*,qint8)));
+    QObject::connect(console, SIGNAL(updateUserctrlBank(UserctrlBank*)), &w, SLOT(updateUserctrl(UserctrlBank*)));
 
     QObject::connect(&w, SIGNAL(mute(qint8)), console, SLOT(mute(qint8)));
     QObject::connect(&w, SIGNAL(recall(QString)), console, SLOT(recall(QString)));
@@ -55,9 +56,14 @@ int main(int argc, char *argv[])
         sock->sendData(msg.getBytes());
     }
 
-    for(int i=5; i<12; i++) {
-        OscMessageComposer msg("/config/userctrl/A/btn/" + QString::number(i));
+    for(QChar bank = 'A'; bank <= QChar('C'); bank++) {
+        OscMessageComposer msg("/config/userctrl/" + QString(bank) + "/color");
         sock->sendData(msg.getBytes());
+
+        for(int i=5; i<12; i++) {
+            OscMessageComposer msg("/config/userctrl/" + QString(bank) + "/btn/" + QString::number(i));
+            sock->sendData(msg.getBytes());
+        }
     }
 
 /*

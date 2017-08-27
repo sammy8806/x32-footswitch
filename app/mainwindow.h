@@ -37,6 +37,8 @@ public:
     void processBtnClick(qint8 btn);
 
     void keyPressEvent(QKeyEvent* event) override;
+
+    void switchBank(int bank);
     
 private:
     Ui::MainWindow *ui;
@@ -44,9 +46,12 @@ private:
     QMap<qint8, UserctrlButton*> *btnData;
     X32Console* console;
 
+    QList<QPushButton*> btn;
+
 public slots:
     void updateStatus(X32Status status);
     void updateUserctrl(UserctrlBank *bank, qint8 btnNr);
+    void updateUserctrl(UserctrlBank *bank);
     void updateChannel(Channel *channel);
 
 private slots:

@@ -40,10 +40,12 @@ private:
     X32ConsoleAbstract *console;
 
     void updateBtn(UserctrlBank* bank, qint8 btnNr, OscMessage& data);
+    void updateBank(UserctrlBank* bank, qint8 color);
 
 public:
 signals:
     void updatedButton(UserctrlBank *bank, qint8 btnNr);
+    void updatedBank(UserctrlBank *bank);
 
 public slots:
     X32_INTERNAL void findMessage(QString address, OscMessage& data) {
@@ -56,6 +58,12 @@ public slots:
             qint8 btnNr = address.mid(23, 2).toInt();
             assert(btnNr != 0);
             updateBtn(bank, btnNr, data);
+        }
+
+        if(address.mid(19, 5) == "color") {
+            qint8 color = data.getValue(0)->toInteger();
+            assert(color >= 0);
+            updateBank(bank, color);
         }
 
         this->console->removeMessage(data);

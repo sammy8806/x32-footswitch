@@ -8,6 +8,7 @@ X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
 
     this->config = new X32Config(this, this);
     connect(config->userctrl, SIGNAL(updatedButton(UserctrlBank*,qint8)), this, SLOT(updatedUserctrlButton(UserctrlBank*,qint8)));
+    connect(config->userctrl, SIGNAL(updatedBank(UserctrlBank*)), this, SLOT(updatedUserctrlBank(UserctrlBank*)));
 
     for(int i=1; i<=MAX_MUTEGROUP; i++) {
         Mutegroup *mg = new Mutegroup(this, i, false, this);

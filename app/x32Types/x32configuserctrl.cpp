@@ -77,3 +77,11 @@ void X32ConfigUserctrl::updateBtn(UserctrlBank *bank, qint8 btnNr, OscMessage &d
     bank->data->insert(btnNr, btn);
     emit updatedButton(bank, btnNr);
 }
+
+void X32ConfigUserctrl::updateBank(UserctrlBank* bank, qint8 color) {
+    qDebug() << "Updating Bank: " << QString(bank->bank);
+
+    bank->color = color;
+
+    emit updatedBank(bank);
+}
