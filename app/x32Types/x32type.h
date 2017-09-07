@@ -342,6 +342,13 @@ struct UserctrlBank {
     UserctrlBankData *data;
 };
 
+struct XInfo {
+    QString ip;
+    QString name;
+    QString model;
+    QString version;
+};
+
 class X32Type : public QObject
 {
     Q_OBJECT

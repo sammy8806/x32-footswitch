@@ -2,7 +2,17 @@
 
 OscUdpSocket::OscUdpSocket(QObject *parent) : QObject(parent), sendQueue(new QQueue<QByteArray*>()), sendTimer(new QTimer()), hostAddr(QString())
 {
+    this->socketNumber = socketCount++;
+}
 
+void OscUdpSocket::setAddress(QString address)
+{
+    this->hostAddr = address;
+}
+
+void OscUdpSocket::setName(QString name)
+{
+    this->socketName = name;
 }
 
 void OscUdpSocket::initSocket()
@@ -11,9 +21,9 @@ void OscUdpSocket::initSocket()
     udpSocket->bind(QHostAddress(QHostAddress::Any), 10050, QUdpSocket::ReuseAddressHint);
 
     if(udpSocket->state() == QUdpSocket::BoundState) {
-        qDebug() << "Socket bound!";
+        DebugLog << "Socket bound!";
     } else {
-        qDebug() << "Connection failed!";
+        DebugLog << "Connection failed!";
     }
 
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()));
@@ -24,11 +34,18 @@ void OscUdpSocket::initSocket()
 
         QString envHost = QString(qgetenv("X32HOST"));
         if(envHost != "") {
-            qDebug() << "Using envvar X32HOST for target address";
+            DebugLog << "Using envvar X32HOST for target address";
             this->hostAddr = envHost;
         }
 
-        qDebug() << "Setting connection Address to: " << this->hostAddr;
+        DebugLog << "Setting connection Address to: " << this->hostAddr;
+    } else {
+        DebugLog << "Using preset address: " << this->hostAddr;
+    }
+
+    if(this->socketName == "") {
+        DebugLog << "Name empty ... using " << this->hostAddr;
+        this->socketName = this->hostAddr;
     }
 }
 
@@ -47,7 +64,7 @@ void OscUdpSocket::processSendQueue()
         sendTimer->stop();
 
     if(this->udpSocket == nullptr) {
-        qDebug() << "What happened here?!";
+        DebugLog << "What happened here?!";
         this->initSocket();
     }
 
@@ -57,9 +74,9 @@ void OscUdpSocket::processSendQueue()
 
     // qint64 bytesWritten = udpSocket->write(*data);
     if(bytesWritten < 0) {
-        qDebug() << "Data write failed!";
+        DebugLog << "Data write failed!";
     } else {
-        qDebug() << "Written: " << bytesWritten << " bytes";
+        DebugLog << "Written:" << bytesWritten << "bytes";
     }
 }
 

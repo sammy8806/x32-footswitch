@@ -79,15 +79,10 @@ void MainWindow::updateChannel(Channel *channel)
     QPushButton *btn;
 
     switch (channel->number) {
-    case 1:
-        btn = ui->chan01;
-        break;
-    case 32:
-        btn = ui->chan32;
-        break;
+    // TODO: Channel association from map here
     default:
+        qDebug() << "Requested Channel " << channel->getNumber() << " not registered!";
         return;
-        break;
     }
 
     qDebug() << "-> Chan " << channel->number;
@@ -132,6 +127,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         // Skip from Btn7 to Btn9
         processBtnClick(fKey + 4 + ((fKey > 3) ? 1 : 0) );
     }
+
+    // TODO: register dialog-window here
+    // TODO: register bank-changes here
 }
 
 void MainWindow::switchBank(int bank)

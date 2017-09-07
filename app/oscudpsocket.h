@@ -20,19 +20,36 @@
 
 #include <osc/composer/OscMessageComposer.h>
 
+#define DebugLog qDebug() << getLogPrefix()
+static int socketCount = 0;
+
 class OscUdpSocket : public QObject
 {
     Q_OBJECT
+
 public:
     explicit OscUdpSocket(QObject *parent = nullptr);
 
+    void setAddress(QString address);
+    void setName(QString name);
     void initSocket();
 
     void sendData(QByteArray* data);
 
 private:
+    QString getLogPrefix() {
+        return QString("[") +
+            this->socketName +
+            QString("#") +
+            QString::number(this->socketNumber) +
+            QString("]");
+    }
+
+    // TODO: Route Messages from/to consoles?
+
     QUdpSocket *udpSocket;
-    QString bullshit = "test";
+    QString socketName;
+    int socketNumber;
 
     QQueue<QByteArray*>* sendQueue;
     QTimer* sendTimer;

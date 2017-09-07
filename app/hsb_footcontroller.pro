@@ -24,6 +24,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+message($$PWD/../OSC/bin/debug)
+
 INCLUDEPATH += ../OSC/
 LIBS += -L../OSC \
     -L../OSC/bin/debug \
@@ -31,6 +33,8 @@ LIBS += -L../OSC \
     -L/home/steven/work/hsb_footcontroller/OSC/bin/debug/ \
     -L/home/steven/work/x32-footswitch/OSC/bin/debug/ \
     -L/Users/steven/work/x32-footswitch/OSC/bin/debug/ \
+    -L../OSC/debug \
+    -L../OSC/release \
     -losc
 
 SOURCES += \
@@ -45,7 +49,8 @@ SOURCES += \
     backgroundheartbeat.cpp \
     x32Types/mutegroup.cpp \
     x32Types/channel.cpp \
-    x32Types/config.cpp
+    x32Types/config.cpp \
+    consolerack.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -59,6 +64,7 @@ HEADERS += \
     backgroundheartbeat.h \
     x32Types/mutegroup.h \
     x32Types/channel.h \
-    x32Types/config.h
+    x32Types/config.h \
+    consolerack.h
 
 FORMS += mainwindow.ui

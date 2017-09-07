@@ -7,11 +7,25 @@
 
 #include <osc/composer/OscMessageComposer.h>
 #include <x32console.h>
+#include "consolerack.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
+
+    ConsoleRack *rack = new ConsoleRack();
+
+    OscUdpSocket *broadcastSock = new OscUdpSocket();
+    broadcastSock->setAddress(QHostAddress(QHostAddress::Broadcast).toString());
+    broadcastSock->initSocket();
+
+    QObject::connect(broadcastSock, SIGNAL(datagramReady(QNetworkDatagram)), rack, SLOT(handleMessage(QNetworkDatagram)));
+
+    {
+        OscMessageComposer msg("/xinfo");
+        broadcastSock->sendData(msg.getBytes());
+    }
 
     OscUdpSocket *sock = new OscUdpSocket();
 
