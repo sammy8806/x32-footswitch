@@ -11,6 +11,5 @@ void BackgroundHeartbeat::tick()
 {
     qDebug() << "Renewing /xremote";
     OscMessageComposer msg("/xremote");
-    QByteArray data(msg.getBytes()->data());
-    emit sendMessage(data);
+    emit sendMessage(msg);
 }

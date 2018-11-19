@@ -34,6 +34,10 @@ void MainWindow::updateStatus(X32Status status)
 
 void MainWindow::updateUserctrl(UserctrlBank *bank, qint8 btnNr)
 {
+    if(bank->bank != 'A') {
+        return;
+    }
+
     QString btnData = bank->data->value(btnNr).data;
     QString btnTitle = X32Console::parseButtonData(btnData, console);
     if(this->btn.at(btnNr - 1) == nullptr) return;
@@ -48,6 +52,10 @@ void MainWindow::updateUserctrl(UserctrlBank *bank, qint8 btnNr)
 
 void MainWindow::updateUserctrl(UserctrlBank *bank)
 {
+    if(bank->bank != 'A') {
+        return;
+    }
+
     QString targetColor = "";
     if(bank->color == 1) {
         targetColor = "red";
@@ -68,7 +76,9 @@ void MainWindow::updateUserctrl(UserctrlBank *bank)
     }
 
     for(QPushButton *btn : this->btn) {
-        btn->setStyleSheet("background-color: " + targetColor + ";");
+        if(btn != nullptr) {
+            btn->setStyleSheet("background-color: " + targetColor + ";");
+        }
     }
 }
 

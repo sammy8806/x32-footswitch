@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QDebug>
+#include <QHostAddress>
 
 #include <osc/composer/OscMessageComposer.h>
 
@@ -17,7 +18,7 @@ private:
     QTimer* timer;
 
 signals:
-    void sendMessage(QByteArray data);
+    void sendMessage(OscMessageComposer data);
 
 public slots:
     void tick();

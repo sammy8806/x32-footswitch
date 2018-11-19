@@ -1,22 +1,32 @@
 #include "x32console.h"
 
-X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
+X32Console::X32Console(QHostAddress consoleAddress, int consolePort, QObject *parent) : X32ConsoleAbstract(parent)
 {
+    this->consoleAddress = consoleAddress;
+    this->consolePort = consolePort;
+
     this->dataPool = new QVector<OscMessage*>();
-    this->mutegroups = new QMap<qint16, Mutegroup*>();
-    this->channels = new QMap<qint16, Channel*>();
+    this->mutegroups = new QMap<quint8, Mutegroup*>();
+    this->channels = new QMap<quint8, Channel*>();
+    this->dcas = new QMap<quint8, Dca*>();
 
     this->config = new X32Config(this, this);
     connect(config->userctrl, SIGNAL(updatedButton(UserctrlBank*,qint8)), this, SLOT(updatedUserctrlButton(UserctrlBank*,qint8)));
     connect(config->userctrl, SIGNAL(updatedBank(UserctrlBank*)), this, SLOT(updatedUserctrlBank(UserctrlBank*)));
 
-    for(int i=1; i<=MAX_MUTEGROUP; i++) {
+    for(quint8 i=1; i<=MAX_DCA; i++) {
+        Dca *dca = new Dca(this, i, false, this);
+        connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), dca, SLOT(findMessage(QString,OscMessage&)));
+        this->dcas->insert(i, dca);
+    }
+
+    for(quint8 i=1; i<=MAX_MUTEGROUP; i++) {
         Mutegroup *mg = new Mutegroup(this, i, false, this);
         connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), mg, SLOT(findMessage(QString,OscMessage&)));
         this->mutegroups->insert(i, mg);
     }
 
-    for(int i=1; i<=MAX_CHAN; i++) {
+    for(quint8 i=1; i<=MAX_CHAN; i++) {
         Channel *chan = new Channel(this, i, this);
         connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), chan, SLOT(findMessage(QString,OscMessage&)));
         connect(chan, SIGNAL(updated(Channel*)), this, SLOT(updatedChannel(Channel*)));
@@ -25,6 +35,15 @@ X32Console::X32Console(QObject *parent) : X32ConsoleAbstract(parent)
 
     connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), config, SLOT(findMessage(QString,OscMessage&)));
     connect(this, SIGNAL(distributeMessage(QString,OscMessage&)), this, SLOT(handleNode(QString,OscMessage&)));
+}
+
+void X32Console::enableConsole()
+{
+    DebugLog << "Enabling Console";
+
+    BackgroundHeartbeat *heartbeat = new BackgroundHeartbeat(this);
+    QObject::connect(heartbeat, SIGNAL(sendMessage(OscMessageComposer)), this, SLOT(sendMessage(OscMessageComposer)));
+    this->refreshValues();
 }
 
 QString X32Console::parseButtonData(QString data, X32Console* console)
@@ -36,7 +55,7 @@ QString X32Console::parseButtonData(QString data, X32Console* console)
     if(data.at(0) == 'O') {
         output = "Mute";
 
-        output.append(X32Console::parseChannelName(data.right(2).toInt(), console));
+        output.append(X32Console::parseChannelName(static_cast<quint8>(data.right(2).toInt()), console));
     } else {
         output = data;
     }
@@ -44,14 +63,14 @@ QString X32Console::parseButtonData(QString data, X32Console* console)
     return output;
 }
 
-QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
+QString X32Console::parseChannelName(quint8 channelNumber, X32Console* console)
 {
     QString output = "";
 
     // TODO: Return Channel Names if set
 
     if(channelNumber <= CHAN_NORMAL_MAX) {
-        Channel* chan;
+        Channel* chan = nullptr;
         if(console != nullptr)
             chan = console->channels->value(channelNumber+1);
 
@@ -64,7 +83,7 @@ QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
         output = "Aux " + QString::number(channelNumber - CHAN_NORMAL_MAX);
     } else if (channelNumber <= CHAN_FX_MAX) {
         bool left = (channelNumber - CHAN_AUX_MAX) % 2;
-        output = "FX " + QString::number((int)ceil((channelNumber - CHAN_AUX_MAX + 1)/2)) + QString(left ? "L" : "R");
+        output = "FX " + QString::number(static_cast<int>(ceil((channelNumber - CHAN_AUX_MAX + 1)/2))) + QString(left ? "L" : "R");
     } else if (channelNumber <= CHAN_BUS_MAX) {
         output = "MixBus " + QString::number(channelNumber - CHAN_FX_MAX);
     } else if (channelNumber <= CHAN_MATRIX_MAX) {
@@ -84,27 +103,13 @@ QString X32Console::parseChannelName(qint8 channelNumber, X32Console* console)
 
 void X32Console::refreshValues()
 {
-    for(int i=1; i<=MAX_CHAN; i++)
+    DebugLog << "Refreshing Values";
+
+    for(quint8 i=1; i<=MAX_CHAN; i++)
         this->channels->value(i)->refresh();
 
-    for(int i=1; i<=MAX_MUTEGROUP; i++)
+    for(quint8 i=1; i<=MAX_MUTEGROUP; i++)
         this->mutegroups->value(i)->refresh();
-}
-
-void X32ConsoleAbstract::setSocket(OscUdpSocket *socket)
-{
-    this->socket = socket;
-}
-
-void X32ConsoleAbstract::sendMessage(OscMessageComposer msg)
-{
-    if(this->socket == nullptr) return;
-    socket->sendData(msg.getBytes());
-}
-
-void X32ConsoleAbstract::removeMessage(OscMessage &msg)
-{
-    this->dataPool->removeOne(&msg);
 }
 
 void X32Console::handleMessage(QNetworkDatagram data)
@@ -232,12 +237,15 @@ void X32Console::updatedUserctrlBank(UserctrlBank *bank)
 
 void X32Console::mute(qint8 chan)
 {
-    bool status;
+    bool status = false;
 
     if(chan <= CHAN_NORMAL_MAX)
         status = !channels->value(chan+1)->mix.on;
 
-    if(chan > CHAN_DCA_MAX && chan <= CHAN_MUTEGROUP_MAX)
+    if(chan >= CHAN_DCA_MIN && chan <= CHAN_DCA_MAX)
+        status = !dcas->value(chan - CHAN_MAINMC)->active;
+
+    if(chan >= CHAN_MUTEGROUP_MIN && chan <= CHAN_MUTEGROUP_MAX)
         status = !mutegroups->value(chan - CHAN_DCA_MAX)->state;
 
     qDebug() << "[Console] " << (status ? "" : "Un") << "Mute " << chan;
@@ -245,7 +253,10 @@ void X32Console::mute(qint8 chan)
     if(chan <= CHAN_NORMAL_MAX)
         channels->value(chan+1)->mute(status);
 
-    if(chan > CHAN_DCA_MAX && chan <= CHAN_MUTEGROUP_MAX)
+    if(chan >= CHAN_DCA_MIN && chan <= CHAN_DCA_MAX)
+        dcas->value(chan - CHAN_MAINMC)->mute(status);
+
+    if(chan >= CHAN_MUTEGROUP_MIN && chan <= CHAN_MUTEGROUP_MAX)
         mutegroups->value(chan - CHAN_DCA_MAX)->mute(status);
 }
 
@@ -279,4 +290,8 @@ void X32Console::recall(QString target)
     }
         break;
     }
+}
+
+QString X32Console::getLogPrefix() {
+    return this->consoleAddress.toString() + QString(this->consolePort);
 }

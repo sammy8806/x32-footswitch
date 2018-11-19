@@ -20,8 +20,14 @@
 
 #include <osc/composer/OscMessageComposer.h>
 
-#define DebugLog qDebug() << getLogPrefix()
-static int socketCount = 0;
+#include <default_types.h>
+
+struct OscUdpDatagram {
+    QHostAddress targetHost;
+    int targetPort;
+
+    QByteArray data;
+};
 
 class OscUdpSocket : public QObject
 {
@@ -34,7 +40,9 @@ public:
     void setName(QString name);
     void initSocket();
 
-    void sendData(QByteArray* data);
+    void sendData(QByteArray *data);
+    void sendData(QByteArray* data, QHostAddress consoleAddr, int consolePort = 10023);
+    void sendData(OscUdpDatagram datagram);
 
 private:
     QString getLogPrefix() {
@@ -51,7 +59,7 @@ private:
     QString socketName;
     int socketNumber;
 
-    QQueue<QByteArray*>* sendQueue;
+    QQueue<OscUdpDatagram>* sendQueue;
     QTimer* sendTimer;
     QString hostAddr;
 

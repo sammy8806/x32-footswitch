@@ -14,45 +14,41 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
 
+    OscUdpSocket *sock = new OscUdpSocket();
     ConsoleRack *rack = new ConsoleRack();
+    rack->socket = sock;
+    sock->initSocket();
 
-    OscUdpSocket *broadcastSock = new OscUdpSocket();
-    broadcastSock->setAddress(QHostAddress(QHostAddress::Broadcast).toString());
-    broadcastSock->initSocket();
-
-    QObject::connect(broadcastSock, SIGNAL(datagramReady(QNetworkDatagram)), rack, SLOT(handleMessage(QNetworkDatagram)));
-
+    for (int i=0; i<1; i++) // Throw 2 discovery packets out there
     {
         OscMessageComposer msg("/xinfo");
-        broadcastSock->sendData(msg.getBytes());
+        OscUdpDatagram discoverPacket;
+        discoverPacket.targetHost = QHostAddress(QHostAddress::Broadcast);
+        discoverPacket.targetPort = 10023;
+        discoverPacket.data = QByteArray(msg.getBytes()->data(), msg.getBytes()->length());
+        sock->sendData(discoverPacket);
     }
 
-    OscUdpSocket *sock = new OscUdpSocket();
+    QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), rack, SLOT(handleMessage(QNetworkDatagram)));
 
-    BackgroundHeartbeat *heartbeat = new BackgroundHeartbeat();
-    QObject::connect(heartbeat, SIGNAL(sendMessage(QByteArray)), sock, SLOT(sendMessage(QByteArray)));
+    // w.setConsole(console);
 
-    X32Console *console = new X32Console();
-    console->setSocket(sock);
+    // QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), console, SLOT(handleMessage(QNetworkDatagram)));
 
-    w.setConsole(console);
+    // QObject::connect(console, SIGNAL(updateChannel(Channel*)), &w, SLOT(updateChannel(Channel*)));
+    // QObject::connect(console, SIGNAL(updateUserctrlButton(UserctrlBank*,qint8)), &w, SLOT(updateUserctrl(UserctrlBank*,qint8)));
+    // QObject::connect(console, SIGNAL(updateUserctrlBank(UserctrlBank*)), &w, SLOT(updateUserctrl(UserctrlBank*)));
 
-    QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), console, SLOT(handleMessage(QNetworkDatagram)));
+    // QObject::connect(&w, SIGNAL(mute(qint8)), console, SLOT(mute(qint8)));
+    // QObject::connect(&w, SIGNAL(recall(QString)), console, SLOT(recall(QString)));
 
-    QObject::connect(console, SIGNAL(updateChannel(Channel*)), &w, SLOT(updateChannel(Channel*)));
-    QObject::connect(console, SIGNAL(updateUserctrlButton(UserctrlBank*,qint8)), &w, SLOT(updateUserctrl(UserctrlBank*,qint8)));
-    QObject::connect(console, SIGNAL(updateUserctrlBank(UserctrlBank*)), &w, SLOT(updateUserctrl(UserctrlBank*)));
+    // sock->initSocket();
+    // console->refreshValues();
 
-    QObject::connect(&w, SIGNAL(mute(qint8)), console, SLOT(mute(qint8)));
-    QObject::connect(&w, SIGNAL(recall(QString)), console, SLOT(recall(QString)));
-
-    sock->initSocket();
-    console->refreshValues();
-
-    {
+    /*{
         OscMessageComposer msg("/xinfo");
         sock->sendData(msg.getBytes());
-    }
+    }*/
 
     /*{
         OscMessageComposer msg("/node");
@@ -65,7 +61,7 @@ int main(int argc, char *argv[])
     }
 */
 
-    {
+    /* {
         OscMessageComposer msg("/xremote");
         sock->sendData(msg.getBytes());
     }
@@ -78,7 +74,7 @@ int main(int argc, char *argv[])
             OscMessageComposer msg("/config/userctrl/" + QString(bank) + "/btn/" + QString::number(i));
             sock->sendData(msg.getBytes());
         }
-    }
+    } */
 
 /*
     {
@@ -93,7 +89,8 @@ int main(int argc, char *argv[])
     sock->sendData(msg2.getBytes());
     */
 
-    w.showMaximized();
+    // w.showMaximized();
+    w.showMinimized();
 
     return a.exec();
 }

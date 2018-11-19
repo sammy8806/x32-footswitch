@@ -12,13 +12,14 @@ class Mutegroup : public QObject {
     Q_OBJECT
 
 public:
-    Mutegroup(X32ConsoleAbstract *console, qint16 number, bool state = false, QObject *parent = nullptr);
+    Mutegroup(X32ConsoleAbstract *console, quint8 number, bool state = false, QObject *parent = nullptr);
 
     void mute(bool status) {  // mix/on
         qDebug() << "[MuteGroup " + QString::number(number)+1 + "] " + (status ? "" : "Un") + "Mute";
 
         OscMessageComposer mute("/config/mute/" + QString::number(number));
-        mute.pushInt32((int)status);
+        mute.pushString((status ? QString("ON") : QString("OFF")));
+        // mute.pushInt32((int)status);
         this->console->sendMessage(mute);
 
         this->refreshTimer->start(50);
@@ -53,6 +54,8 @@ public slots:
             this->state = data.getValue(number - 1)->toInteger();
         else
             this->state = data.getValue(0)->toInteger();
+
+        qDebug() << "State set to:" << this->state;
 
         if(number >= 6)
             this->console->removeMessage(data);

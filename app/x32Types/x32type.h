@@ -4,8 +4,9 @@
 #include <QObject>
 #include <QRegExp>
 
+#include <default_types.h>
+
 #define X32_INTERNAL
-// class X32Console;
 
 #include <osc/composer/OscMessageComposer.h>
 #include <osc/reader/OscMessage.h>
@@ -19,18 +20,34 @@ public:
 
     }
 
-    virtual void setSocket(OscUdpSocket *socket);
-    virtual void sendMessage(OscMessageComposer msg);
+    virtual void setSocket(OscUdpSocket *socket) {
+        this->socket = socket;
+        QObject::connect(this->socket, SIGNAL(datagramReady(QNetworkDatagram)), this, SLOT(handleMessage(QNetworkDatagram)));
+    }
 
-    virtual void removeMessage(OscMessage& msg);
+    X32_INTERNAL virtual void sendMessage(OscMessageComposer msg) {
+        if(this->socket == nullptr) return;
+        socket->sendData(msg.getBytes(), this->consoleAddress, this->consolePort);
+    }
+
+    X32_INTERNAL virtual void removeMessage(OscMessage& msg) {
+        this->dataPool->removeOne(&msg);
+    }
+
 
 protected:
     OscUdpSocket *socket;
     QVector<OscMessage*> *dataPool;
+
+    QHostAddress consoleAddress;
+    int consolePort;
+
+    X32_INTERNAL virtual QString getLogPrefix() = 0;
 };
 
 #define MAX_CHAN 32
 #define MAX_MUTEGROUP 6
+#define MAX_DCA 8
 
 #define CHAN_NORMAL_MAX 31
 #define CHAN_AUX_MAX 39
@@ -39,7 +56,9 @@ protected:
 #define CHAN_MATRIX_MAX 69
 #define CHAN_MAINLR 70
 #define CHAN_MAINMC 71
+#define CHAN_DCA_MIN 72
 #define CHAN_DCA_MAX 79
+#define CHAN_MUTEGROUP_MIN 80
 #define CHAN_MUTEGROUP_MAX 85
 
 enum X32LcdColors {

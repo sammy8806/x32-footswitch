@@ -1,8 +1,8 @@
 #include "oscudpsocket.h"
 
-OscUdpSocket::OscUdpSocket(QObject *parent) : QObject(parent), sendQueue(new QQueue<QByteArray*>()), sendTimer(new QTimer()), hostAddr(QString())
+OscUdpSocket::OscUdpSocket(QObject *parent) : QObject(parent), sendQueue(new QQueue<OscUdpDatagram>()), sendTimer(new QTimer()), hostAddr(QString())
 {
-    this->socketNumber = socketCount++;
+    // this->socketNumber = socketCount++;
 }
 
 void OscUdpSocket::setAddress(QString address)
@@ -18,7 +18,8 @@ void OscUdpSocket::setName(QString name)
 void OscUdpSocket::initSocket()
 {
     udpSocket = new QUdpSocket(this);
-    udpSocket->bind(QHostAddress(QHostAddress::Any), 10050, QUdpSocket::ReuseAddressHint);
+    // udpSocket->bind(QHostAddress(QHostAddress::AnyIPv4), 10050, QUdpSocket::ReuseAddressHint | QUdpSocket::ShareAddress);
+    udpSocket->bind(10050, QUdpSocket::ReuseAddressHint | QUdpSocket::ShareAddress);
 
     if(udpSocket->state() == QUdpSocket::BoundState) {
         DebugLog << "Socket bound!";
@@ -49,16 +50,28 @@ void OscUdpSocket::initSocket()
     }
 }
 
+void OscUdpSocket::sendData(QByteArray *data, QHostAddress consoleAddr, int consolePort) {
+    QByteArray dat = QByteArray(data->data(), data->length());
+    OscUdpDatagram datagram = OscUdpDatagram();
+    datagram.data = dat;
+    datagram.targetHost = consoleAddr;
+    datagram.targetPort = consolePort;
+    this->sendData(datagram);
+}
+
 void OscUdpSocket::sendData(QByteArray *data)
 {
-    QByteArray *dat = new QByteArray(data->data(), data->length());
-    this->sendQueue->enqueue(dat);
+    this->sendData(data, QHostAddress(this->hostAddr), 10023);
+}
+
+void OscUdpSocket::sendData(OscUdpDatagram datagram) {
+    this->sendQueue->enqueue(datagram);
     this->sendTimer->start(7);
 }
 
 void OscUdpSocket::processSendQueue()
 {
-    QByteArray* data = sendQueue->dequeue();
+    OscUdpDatagram data = sendQueue->dequeue();
 
     if(sendQueue->length() == 0)
         sendTimer->stop();
@@ -70,7 +83,7 @@ void OscUdpSocket::processSendQueue()
 
     assert(this->udpSocket != nullptr);
 
-    qint64 bytesWritten = this->udpSocket->writeDatagram(*data, QHostAddress(this->hostAddr), 10023);
+    int bytesWritten = this->udpSocket->writeDatagram(data.data, data.targetHost, data.targetPort);
 
     // qint64 bytesWritten = udpSocket->write(*data);
     if(bytesWritten < 0) {
@@ -84,6 +97,7 @@ void OscUdpSocket::readPendingDatagrams()
 {
     while(udpSocket->hasPendingDatagrams()) {
         QNetworkDatagram datagram = udpSocket->receiveDatagram();
+        DebugLog << "Received Datagram from " << datagram.senderAddress().toString() << ":" << datagram.senderPort() << " length: " << datagram.data().length();
         emit datagramReady(datagram);
     }
 }

@@ -15,7 +15,7 @@ class Channel : public QObject {
     Q_OBJECT
 
 public:
-    Channel(X32ConsoleAbstract *console, qint8 number, QObject *parent = nullptr): QObject(parent),
+    Channel(X32ConsoleAbstract *console, quint8 number, QObject *parent = nullptr): QObject(parent),
         console(console), refreshTimer(new QTimer()), number(number) {
         // OscMessageComposer mix("/subscribe");
         // mix.pushString("/ch/01/mix/on");
@@ -103,11 +103,13 @@ public slots:
             if(address.mid(14, 4) == "name") {
                 this->stateDirty = true;
 
-                QString name = data.getValue(0)->toString();
-                name.remove('"');
-                name.remove('"');
-                qDebug() << "[Channel "+QString::number(this->number)+"] Name: " << name.trimmed();
-                config.name = name.trimmed();
+                if(data.getNumValues() >= 1) {
+                    QString name = data.getValue(0)->toString();
+                    name.remove('"');
+                    name.remove('"');
+                    qDebug() << "[Channel "+QString::number(this->number)+"] Name: " << name.trimmed();
+                    config.name = name.trimmed();
+                }
             }
         }
 

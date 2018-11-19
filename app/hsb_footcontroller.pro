@@ -50,7 +50,8 @@ SOURCES += \
     x32Types/mutegroup.cpp \
     x32Types/channel.cpp \
     x32Types/config.cpp \
-    consolerack.cpp
+    consolerack.cpp \
+    x32Types/dca.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -65,6 +66,8 @@ HEADERS += \
     x32Types/mutegroup.h \
     x32Types/channel.h \
     x32Types/config.h \
-    consolerack.h
+    consolerack.h \
+    x32Types/dca.h \
+    default_types.h
 
 FORMS += mainwindow.ui

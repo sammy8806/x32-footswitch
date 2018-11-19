@@ -2,6 +2,8 @@
 #define CONSOLERACK_H
 
 #include <QObject>
+#include <QDebug>
+#include <QRegularExpression>
 
 #include "x32Types/x32type.h"
 #include "x32console.h"
@@ -16,14 +18,14 @@ public:
 
     X32Console *getConsole(QString name);
     X32Console *getFirstConsole();
-    QMap<QString, XInfo> *getConsoleList();
+
+    OscUdpSocket* socket;
 
 private:
     // IP-Address, Console
     QMap<QString, X32Console*> *consoles;
 
-    // IP-Address,
-    QMap<QString, XInfo> *consoleList;
+    void registerConsole(QHostAddress address, int port, XInfo info);
 
 signals:
 
