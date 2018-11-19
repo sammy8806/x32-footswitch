@@ -12,6 +12,10 @@ X32Console *ConsoleRack::getConsole(QString name)
 
 X32Console *ConsoleRack::getFirstConsole()
 {
+    if(this->consoles->size() == 0) {
+        return nullptr;
+    }
+
     return this->consoles->first();
 }
 

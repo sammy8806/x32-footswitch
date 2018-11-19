@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "consolerack.h"
+
 #include <QMainWindow>
 #include <QDebug>
 #include <QLineEdit>
@@ -32,6 +34,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     void setConsole(X32Console *console);
+    void setConsoleRack(ConsoleRack *rack);
     ~MainWindow();
 
     void processBtnClick(qint8 btn);
@@ -45,6 +48,7 @@ private:
 
     QMap<qint8, UserctrlButton*> *btnData;
     X32Console* console;
+    ConsoleRack* rack;
 
     QList<QPushButton*> btn;
 
@@ -61,6 +65,8 @@ private slots:
     void on_btn7_clicked();
     void on_btn9_clicked();
     void on_btn10_clicked();
+
+    void on_btnSearchConsole_clicked();
 
 signals:
     void mute(qint8 channel);

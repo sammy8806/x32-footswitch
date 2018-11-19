@@ -31,16 +31,8 @@ int main(int argc, char *argv[])
 
     QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), rack, SLOT(handleMessage(QNetworkDatagram)));
 
-    // w.setConsole(console);
+    w.setConsoleRack(rack);
 
-    // QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), console, SLOT(handleMessage(QNetworkDatagram)));
-
-    // QObject::connect(console, SIGNAL(updateChannel(Channel*)), &w, SLOT(updateChannel(Channel*)));
-    // QObject::connect(console, SIGNAL(updateUserctrlButton(UserctrlBank*,qint8)), &w, SLOT(updateUserctrl(UserctrlBank*,qint8)));
-    // QObject::connect(console, SIGNAL(updateUserctrlBank(UserctrlBank*)), &w, SLOT(updateUserctrl(UserctrlBank*)));
-
-    // QObject::connect(&w, SIGNAL(mute(qint8)), console, SLOT(mute(qint8)));
-    // QObject::connect(&w, SIGNAL(recall(QString)), console, SLOT(recall(QString)));
 
     // sock->initSocket();
     // console->refreshValues();
@@ -90,7 +82,8 @@ int main(int argc, char *argv[])
     */
 
     // w.showMaximized();
-    w.showMinimized();
+    // w.showMinimized();
+    w.showNormal();
 
     return a.exec();
 }

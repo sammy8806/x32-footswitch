@@ -23,6 +23,8 @@ public:
     void enableConsole();
     void refreshValues();
 
+    QString getConsoleName();
+
     static QString parseButtonData(QString data, X32Console *console = nullptr);
     static QString parseChannelName(quint8 channelNumber, X32Console *console = nullptr);
 

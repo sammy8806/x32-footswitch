@@ -112,6 +112,11 @@ void X32Console::refreshValues()
         this->mutegroups->value(i)->refresh();
 }
 
+QString X32Console::getConsoleName()
+{
+    return this->consoleAddress.toString().append(QString(this->consolePort));
+}
+
 void X32Console::handleMessage(QNetworkDatagram data)
 {
     // qDebug() << "Data: " << data.data();
