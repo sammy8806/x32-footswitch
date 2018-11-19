@@ -3,7 +3,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    console(nullptr), rack(nullptr)
 {
     ui->setupUi(this);
 
@@ -22,16 +23,25 @@ void MainWindow::setConsole(X32Console *console)
         return;
     }
 
+    if (this->console != nullptr) {
+        QObject::disconnect(this->console, SIGNAL(updateChannel(Channel*)), this, SLOT(updateChannel(Channel*)));
+        QObject::disconnect(this->console, SIGNAL(updateUserctrlButton(UserctrlBank*,qint8)), this, SLOT(updateUserctrl(UserctrlBank*,qint8)));
+        QObject::disconnect(this->console, SIGNAL(updateUserctrlBank(UserctrlBank*)), this, SLOT(updateUserctrl(UserctrlBank*)));
+
+        QObject::disconnect(this, SIGNAL(mute(qint8)), this->console, SLOT(mute(qint8)));
+        QObject::disconnect(this, SIGNAL(recall(QString)), this->console, SLOT(recall(QString)));
+    }
+
     this->console = console;
 
     ui->consoleData->setText(this->console->getConsoleName());
 
-    QObject::connect(this->console, SIGNAL(updateChannel(Channel*)), this, SLOT(updateChannel(Channel*)));
-    QObject::connect(this->console, SIGNAL(updateUserctrlButton(UserctrlBank*,qint8)), this, SLOT(updateUserctrl(UserctrlBank*,qint8)));
-    QObject::connect(this->console, SIGNAL(updateUserctrlBank(UserctrlBank*)), this, SLOT(updateUserctrl(UserctrlBank*)));
+    QObject::connect(this->console, SIGNAL(updateChannel(Channel*)), this, SLOT(updateChannel(Channel*)), Qt::UniqueConnection);
+    QObject::connect(this->console, SIGNAL(updateUserctrlButton(UserctrlBank*,qint8)), this, SLOT(updateUserctrl(UserctrlBank*,qint8)), Qt::UniqueConnection);
+    QObject::connect(this->console, SIGNAL(updateUserctrlBank(UserctrlBank*)), this, SLOT(updateUserctrl(UserctrlBank*)), Qt::UniqueConnection);
 
-    QObject::connect(this, SIGNAL(mute(qint8)), this->console, SLOT(mute(qint8)));
-    QObject::connect(this, SIGNAL(recall(QString)), this->console, SLOT(recall(QString)));
+    QObject::connect(this, SIGNAL(mute(qint8)), this->console, SLOT(mute(qint8)), Qt::UniqueConnection);
+    QObject::connect(this, SIGNAL(recall(QString)), this->console, SLOT(recall(QString)), Qt::UniqueConnection);
 
     for(Channel* chan : *this->console->channels) {
         this->updateChannel(chan);
