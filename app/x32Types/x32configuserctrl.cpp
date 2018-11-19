@@ -58,6 +58,27 @@ X32ConfigUserctrl::X32ConfigUserctrl(X32ConsoleAbstract *console, QObject *paren
     }*/
 }
 
+QMap<QChar, UserctrlBank *>* X32ConfigUserctrl::getBanks()
+{
+    return this->assignData;
+}
+
+void X32ConfigUserctrl::refreshBank(QChar bank)
+{
+    if(assignData->isEmpty() || assignData->value(bank) == nullptr) {
+        qDebug() << "Bank" << bank << "does not exist!";
+        return;
+    }
+
+    OscMessageComposer msg("/config/userctrl/" + QString(bank) + "/color");
+    console->sendMessage(msg);
+
+    for(int i=5; i<12; i++) {
+        OscMessageComposer msg("/config/userctrl/" + QString(bank) + "/btn/" + QString::number(i));
+        console->sendMessage(msg);
+    }
+}
+
 void X32ConfigUserctrl::updateBtn(UserctrlBank *bank, qint8 btnNr, OscMessage &data)
 {
     qDebug() << "Updating Buton: " << btnNr;

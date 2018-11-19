@@ -32,6 +32,16 @@ void MainWindow::setConsole(X32Console *console)
 
     QObject::connect(this, SIGNAL(mute(qint8)), this->console, SLOT(mute(qint8)));
     QObject::connect(this, SIGNAL(recall(QString)), this->console, SLOT(recall(QString)));
+
+    for(Channel* chan : *this->console->channels) {
+        this->updateChannel(chan);
+    }
+
+    for(UserctrlBank* bank : *this->console->config->userctrl->getBanks()) {
+        for(quint8 i=0; i<bank->data->size(); i++) {
+            updateUserctrl(bank, i+1);
+        }
+    }
 }
 
 void MainWindow::setConsoleRack(ConsoleRack *rack)

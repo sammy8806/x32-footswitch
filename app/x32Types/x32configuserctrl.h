@@ -27,6 +27,9 @@ public:
     }
 
     void parseUserCtrl(QString data);
+    QMap<QChar, UserctrlBank *>* getBanks();
+
+    void refreshBank(QChar bank);
 
     UserctrlButton buttonData;
     QString page;

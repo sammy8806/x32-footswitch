@@ -353,7 +353,7 @@ struct UserctrlButton {
     QString data;
 };
 
-typedef QMap<qint8, UserctrlButton> UserctrlBankData;
+typedef QMap<quint8, UserctrlButton> UserctrlBankData;
 
 struct UserctrlBank {
     QChar bank;

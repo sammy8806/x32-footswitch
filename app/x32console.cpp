@@ -110,6 +110,10 @@ void X32Console::refreshValues()
 
     for(quint8 i=1; i<=MAX_MUTEGROUP; i++)
         this->mutegroups->value(i)->refresh();
+
+    for(UserctrlBank* bank : *this->config->userctrl->getBanks()) {
+        this->config->userctrl->refreshBank(bank->bank);
+    }
 }
 
 QString X32Console::getConsoleName()
