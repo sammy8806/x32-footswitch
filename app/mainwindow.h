@@ -71,6 +71,7 @@ private slots:
 signals:
     void mute(qint8 channel);
     void recall(QString target);
+    void insert(qint8 channel);
 };
 
 #endif // MAINWINDOW_H

@@ -19,7 +19,9 @@ int main(int argc, char *argv[])
     rack->socket = sock;
     sock->initSocket();
 
-    for (int i=0; i<1; i++) // Throw 2 discovery packets out there
+    QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), rack, SLOT(handleMessage(QNetworkDatagram)));
+
+    for (int i=0; i<4; i++) // Throw 2 discovery packets out there
     {
         OscMessageComposer msg("/xinfo");
         OscUdpDatagram discoverPacket;
@@ -29,18 +31,16 @@ int main(int argc, char *argv[])
         sock->sendData(discoverPacket);
     }
 
-    QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), rack, SLOT(handleMessage(QNetworkDatagram)));
-
     w.setConsoleRack(rack);
 
 
     // sock->initSocket();
     // console->refreshValues();
 
-    /*{
+    {
         OscMessageComposer msg("/xinfo");
         sock->sendData(msg.getBytes());
-    }*/
+    }
 
     /*{
         OscMessageComposer msg("/node");
@@ -81,9 +81,9 @@ int main(int argc, char *argv[])
     sock->sendData(msg2.getBytes());
     */
 
-    // w.showMaximized();
+    w.showMaximized();
     // w.showMinimized();
-    w.showNormal();
+    // w.showNormal();
 
     return a.exec();
 }
