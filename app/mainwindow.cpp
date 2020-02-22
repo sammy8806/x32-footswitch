@@ -42,6 +42,7 @@ void MainWindow::setConsole(X32Console *console)
 
     QObject::connect(this, SIGNAL(mute(qint8)), this->console, SLOT(mute(qint8)), Qt::UniqueConnection);
     QObject::connect(this, SIGNAL(recall(QString)), this->console, SLOT(recall(QString)), Qt::UniqueConnection);
+    QObject::connect(this, SIGNAL(insert(qint8)), this->console, SLOT(insert(qint8)));
 
     for(Channel* chan : *this->console->channels) {
         this->updateChannel(chan);
@@ -155,6 +156,9 @@ void MainWindow::processBtnClick(qint8 btn)
         break;
     case X32ConfigBtn::BtnRecall:
         emit recall(btnData->data.right(3));
+        break;
+    case X32ConfigBtn::BtnInsert:
+        emit insert(btnData->data.right(2).toInt());
         break;
     default:
         break;

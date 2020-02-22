@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>X32 Footcontroller</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -161,6 +161,9 @@
          <font>
           <pointsize>24</pointsize>
          </font>
+        </property>
+        <property name="tabletTracking">
+         <bool>true</bool>
         </property>
         <property name="text">
          <string/>

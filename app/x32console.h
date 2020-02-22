@@ -54,6 +54,7 @@ public slots:
 
     void mute(qint8 chan);
     void recall(QString target);
+    void insert(qint8 chan);
 
     X32_INTERNAL virtual void sendMessage(OscMessageComposer msg) override {
         if(this->socket == nullptr) return;

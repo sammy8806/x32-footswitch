@@ -36,7 +36,7 @@ void ConsoleRack::registerConsole(QHostAddress address, int port, XInfo info)
 
     qDebug() << "! Enabled" << info.name << "!";
 
-    this->consoles->insert(address.toString(), console);
+    this->consoles->insert(info.ip, console);
 }
 
 void ConsoleRack::handleMessage(QNetworkDatagram data)
@@ -63,7 +63,7 @@ void ConsoleRack::handleMessage(QNetworkDatagram data)
 
     qDebug() << "Found " << model << " " << name << " (" << version << ") [" << ip << "]";
 
-    if(this->getConsole(address) != nullptr) {
+    if(this->getConsole(ip) != nullptr) {
         this->registerConsole(data.senderAddress(), data.senderPort(), {ip, name, model, version});
     } else {
         qDebug() << "Console" << name << "already registered ... skipping";

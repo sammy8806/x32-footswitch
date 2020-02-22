@@ -301,6 +301,19 @@ void X32Console::recall(QString target)
     }
 }
 
+void X32Console::insert(qint8 chan)
+{
+    bool status = false;
+
+    if(chan <= CHAN_NORMAL_MAX)
+        status = !channels->value(chan+1)->insert.on;
+
+    qDebug() << "[Console] " << (status ? "" : "Un") << "Mute " << chan;
+
+    if(chan <= CHAN_NORMAL_MAX)
+        channels->value(chan+1)->setInsert(status);
+}
+
 QString X32Console::getLogPrefix() {
     return this->consoleAddress.toString() + QString(this->consolePort);
 }

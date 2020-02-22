@@ -22,6 +22,8 @@ public:
         // mix.pushInt32(10);
         // this->console->sendMessage(mix);
 
+        insert.on = false;
+
         props = new QList<QString>();
         props->append("config/name");
         props->append("config/icon");
@@ -32,6 +34,11 @@ public:
         props->append("mix/st");
         props->append("mix/pan");
         props->append("mix/mono");
+        props->append("insert/on");
+        // props->append("insert/pos");
+        // props->append("insert/sel");
+        // props->append("grp/dca");
+        // props->append("grp/mute");
 
         connect(refreshTimer, SIGNAL(timeout()), this, SLOT(timedRefresh()));
         this->refreshTimer->setSingleShot(true);
@@ -44,6 +51,17 @@ public:
         OscMessageComposer mute("/ch/" + chan + "/mix/on");
         mute.pushInt32((int)status);
         this->console->sendMessage(mute);
+
+        this->refreshTimer->start(50);
+    }
+
+    void setInsert(bool status) { // insert/on
+        qDebug() << "[CH" + QString::number(number)+1 + "] " + (status ? "" : "Not ") + "Inserted";
+
+        QString chan = QString("%1").arg(number, 2, 10, QChar('0'));
+        OscMessageComposer insert("/ch/" + chan + "/insert/on");
+        insert.pushInt32((int)status);
+        this->console->sendMessage(insert);
 
         this->refreshTimer->start(50);
     }
@@ -130,6 +148,26 @@ public slots:
 
                 qDebug() << "is " << (isOn ? "on" : "off") << " - " << address;
                 mix.on = isOn;
+            }
+        }
+
+        if(address.mid(7, 6) == "insert") {
+            if(address.mid(14, 2) == "on") {
+                this->stateDirty = true;
+
+                bool isOn = false;
+                QString isOnTmp = data.getValue(0)->toString();
+
+                if(isOnTmp == "ON") {
+                    isOn = true;
+                } else if(isOnTmp == "OFF") {
+                    isOn = false;
+                } else {
+                    isOn = data.getValue(0)->toBoolean();
+                }
+
+                qDebug() << "is " << (isOn ? "inserted" : "not inserted") << " - " << address;
+                insert.on = isOn;
             }
         }
 
