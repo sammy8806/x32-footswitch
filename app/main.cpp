@@ -9,6 +9,8 @@
 #include <x32console.h>
 #include "consolerack.h"
 
+#include <QNetworkInterface>
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -21,13 +23,60 @@ int main(int argc, char *argv[])
 
     QObject::connect(sock, SIGNAL(datagramReady(QNetworkDatagram)), rack, SLOT(handleMessage(QNetworkDatagram)));
 
-    for (int i=0; i<4; i++) // Throw 2 discovery packets out there
+    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
+
+    QList<QHostAddress> broadcastAddresses = QList<QHostAddress>();
+
+    for(const QNetworkInterface &interface: QNetworkInterface::allInterfaces()) {
+        if(
+                interface.type() != QNetworkInterface::Wifi
+                && interface.type() != QNetworkInterface::Ethernet
+        ) {
+            continue;
+        }
+
+        for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
+            if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost) {
+                qDebug() << "Interface " << interface.name() << ": "
+                         // << "[" << interface.type() << "] "
+                         << ": " << address.toString();
+
+                for(QNetworkAddressEntry entry : interface.addressEntries()) {
+                    QHostAddress localBroadcast = entry.broadcast();
+                    if(localBroadcast.isNull()) {
+                        continue;
+                    }
+
+                    qDebug() << "Broadcast: " << localBroadcast.toString();
+                    broadcastAddresses.append(localBroadcast);
+                }
+            }
+        }
+    }
+
+    for(QHostAddress broadcast : broadcastAddresses) {
+        for (int i=0; i<2; i++) // Throw 2 discovery packets out there
+        {
+            OscMessageComposer msg("/xinfo");
+            OscUdpDatagram discoverPacket;
+            discoverPacket.targetHost = broadcast;
+            discoverPacket.targetPort = 10023;
+            discoverPacket.data = QByteArray(msg.getBytes()->data(), msg.getBytes()->length());
+
+            qDebug() << "Send discover to: " << broadcast.toString();
+            sock->sendData(discoverPacket);
+        }
+    }
+
+    for (int i=0; i<2; i++) // Throw 2 discovery packets out there
     {
         OscMessageComposer msg("/xinfo");
         OscUdpDatagram discoverPacket;
         discoverPacket.targetHost = QHostAddress(QHostAddress::Broadcast);
         discoverPacket.targetPort = 10023;
         discoverPacket.data = QByteArray(msg.getBytes()->data(), msg.getBytes()->length());
+
+        qDebug() << "Send discover to: " << discoverPacket.targetHost.toString();
         sock->sendData(discoverPacket);
     }
 
